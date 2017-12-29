@@ -7,7 +7,7 @@
 #include<iostream>
 #include<sstream>
 //#include<windows.h>
-#include"socket.h"
+#include"..\Socket\socket.h"
 #include"utils.h"
 using namespace std;
 
@@ -40,7 +40,7 @@ DWORD WINAPI client(LPVOID lParam) //windows thread函数标准格式
 	Socket client("127.0.0.1", 8490);
 	client.ClientStart();
 
-	client.SendFile("D:\\VisualStudio.zip", "E:\\temp\\VisualStudio.zip");
+	client.SendFile("F:\\Android\\FirstApp.apk", "F:\\FirstApp.apk");
 	Sleep(1000);
 	//client.Close();
 	return 0;
@@ -62,30 +62,14 @@ void TestSendFile()
 	WaitForSingleObject(handle, INFINITE);
 }
 
-//不能分步执行导致卡死,尝试多线程解决
+//two threads one for sending file the other for receiving file
 void ThreadSendFile()
 {
 	HANDLE handle[2];
 	handle[0] = CreateThread(NULL, 0, server, NULL, 0, NULL);
+	Sleep(1000);
 	handle[1] = CreateThread(NULL, 0, client, NULL, 0, NULL);
 	WaitForMultipleObjects(2, handle, TRUE, INFINITE);
- //   cout<<"server start ..."<<endl;
- //   CSocket server(8490);
- //   server.ServerStart();
-
- //   cout<<"client start ..."<<endl;
- //   CSocket client("127.0.0.1",8490);
- //   client.ClientStart();
-
- //   cout<<"server accept connection ..."<<endl;
- //   server.Accept();
- //   cout<<server.GetIp()<<endl; 
- //   cout<<server.GetPort()<<endl;
-
- //   client.SendFile("E:\\a.txt","E:\\z\\a.txt");
-
- //   server.RecvFile();
-	//client.Close();
 }
 
 void TestBase()

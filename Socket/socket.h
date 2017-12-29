@@ -13,7 +13,7 @@
 #include<winsock2.h>
 using namespace std;
 
-class Socket
+class __declspec(dllexport) Socket
 {
 //Attributes
 private:
@@ -28,7 +28,6 @@ private:
     SOCKADDR_IN socketinfo;
     SOCKADDR_IN server;
 
-    //需要发送文件的大小
 public:
     char recvbuff[MAXSIZE];
 
@@ -58,7 +57,7 @@ public:
     int SendFile(const string localpath,const string serverpath);
 
     //接收文件
-    void RecvFile();
+    int RecvFile();
 
     //设置连接选项
     void SetSocketOption();
@@ -68,7 +67,7 @@ public:
 
     //发送
     int Send(string sendbuff);
-    int Send(char* sendbuff,int buffsize);
+    int Send(const char* sendbuff,const int buffsize);
 
     //接收
     int Receive();

@@ -7,16 +7,23 @@
 #define _WINSOCK_DEPRECATED_NO_WARNINGS 
 #include<fstream>
 #include "socket.h"
+#include "md5.h"
 #pragma comment(lib, "ws2_32.lib")  
 
-//默认初始化
+//default initialization
 Socket::Socket()
 {
     WSADATA wsaData;
-    WSAStartup(0x0202, &wsaData);
+	int iResult;
+	//initiates use of the Winsock DLL by a process
+	iResult = WSAStartup(0x0202, &wsaData);
+	if (iResult != 0)
+	{
+		cout << "initialize error:" << WSAGetLastError() << endl;
+	}
 
-    server.sin_family = PF_INET;      
-    server.sin_port = htons(8490);      
+    server.sin_family = PF_INET;    
+    server.sin_port = htons(8490);
     server.sin_addr.s_addr = inet_addr("127.0.0.1");
 }
 
@@ -24,11 +31,17 @@ Socket::Socket()
 Socket::Socket(const int port)
 {
     WSADATA wsaData;
+	int iResult;
     WSAStartup(0x0202, &wsaData); 
+	iResult = WSAStartup(0x0202, &wsaData);
+	if (iResult != 0)
+	{
+		cout << "initialize error:" << WSAGetLastError() << endl;
+	}
 
-    server.sin_family = AF_INET;      
-    server.sin_port = htons(port);      
-    server.sin_addr.s_addr = htonl(INADDR_ANY); 
+    server.sin_family = AF_INET;    
+    server.sin_port = htons(port);
+    server.sin_addr.s_addr = htonl(INADDR_ANY);
 
 }
 
@@ -36,33 +49,22 @@ Socket::Socket(const int port)
 Socket::Socket(const string ip,const int port)
 {
     WSADATA wsaData;
-    WSAStartup(0x0202, &wsaData);
+	int iResult;
+	WSAStartup(0x0202, &wsaData);
+	iResult = WSAStartup(0x0202, &wsaData);
+	if (iResult != 0)
+	{
+		cout << "initialize error:" << WSAGetLastError() << endl;
+	}
 
-    server.sin_family = PF_INET;      
-    server.sin_port = htons(port);      
+    server.sin_family = PF_INET;
+	server.sin_port = htons(port);
     server.sin_addr.s_addr = inet_addr(ip.c_str());
 }
 
 Socket::~Socket()
 {}
 
-//创建socket
-//这个方法可以重载，实现修改socekt流和协议
-// int CSocket::Socket()
-// {
-//     ListenSocket=socket(AF_INET, SOCK_STREAM, IPPROTO_TCP); 
-//     LinkedSocket=socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
-
-//     //错误检查
-//     if(LinkedSocket==INVALID_SOCKET||ListenSocket==INVALID_SOCKET)
-//     {
-//         return 0;
-//     }
-//     else
-//     {
-//         return 1;
-//     }
-// }
 
 //绑定端口
 int Socket::Bind()
@@ -73,7 +75,7 @@ int Socket::Bind()
 //监听端口
 int Socket::Listen()
 {
-    return listen(ListenSocket, 5); 
+    return listen(ListenSocket, 5);
 }
 
 //连接端口
@@ -87,75 +89,152 @@ int Socket::Connect()
 void Socket::IsConnected()
 {}
 
-//发送文件
-//返回结果 
+//send file
 //1表示上传成功
 //-1表示连接断开
-//-2表示
+//-2 means localpath not exists
 int Socket::SendFile(const string localpath,const string serverpath)
 {
+	int iResult;
     ifstream file(localpath,ios::binary);
     char sendbuff[MAXSIZE];
     int size;
-	//int totalsize = 0;
     strcpy(sendbuff,serverpath.c_str());
-    Send(sendbuff,MAXSIZE);
-    
+	sendbuff[serverpath.length()] = 3;
+
+	char md5[33];
+	md5[32] = '\0';
+	iResult = GetMD5(localpath.c_str(), md5);
+	if (iResult == -1)
+	{
+		return -2;
+	}
+	for (int i = 0; i < 32; i++)
+	{
+		sendbuff[267 + i] = md5[i];
+	}
+	sendbuff[299] = '\0';
+	//can be less than the number requested to be sent in the len parameter
+	//300 = 260 filename length + 32 bytes of md5
+	iResult = Send(sendbuff, MAXSIZE);
+	if (iResult == SOCKET_ERROR)
+	{
+		//WSAGetLastError();
+	}
     file.read(sendbuff,sizeof(char)*MAXSIZE);
     size = file.gcount();
     while(size==MAXSIZE)
     {
-		//cout << totalsize << endl;
-		//if (!Send(sendbuff, MAXSIZE))
-		//{
-		//	cout << "sendfailed" << endl;
-		//	Sleep(0.1);
-		//	Send(sendbuff, MAXSIZE);
-		//}
-		//totalsize += size;
 		Send(sendbuff, MAXSIZE);
-        file.read(sendbuff,sizeof(char)*MAXSIZE);
-        size=file.gcount();
+		file.read(sendbuff, sizeof(char)*MAXSIZE);
+		size = file.gcount();
     }
     if(size)
     {
-        Send(sendbuff,size);
-		//totalsize += size;
+		Send(sendbuff, size);
     }
-	//cout << totalsize << endl;
-	Close();
+
+	//transmit over,close socket
+	iResult = Close();
+	if (iResult == SOCKET_ERROR)
+	{
+		//WSAGetLastError();
+	}
     return 1;
 }
 
 //接收文件,非阻塞设置
-void Socket::RecvFile()
+int Socket::RecvFile()
 {
-    int filemem = Receive();
-	//cout << "filemen" << filemem << endl;
-    string path(recvbuff);
+	string path, fileinfo;
+	//guarantee of geting 4096 bytes
+	int iResult, fileinfosize = MAXSIZE;
+	do
+	{
+		iResult = Receive();
+		if (iResult > 0)
+		{
+			fileinfosize -= iResult;
+			fileinfo.assign(recvbuff, 0, iResult);
+		}
+		else if (iResult == SOCKET_ERROR)
+		{
+			//an error occurs
+		}
+		else if (iResult == 0)
+		{
+			//the connection has been gracefully closed
+		}
+	} while (fileinfosize > 0);
+	
+    
+	//if the file already exists, check the md5
+	char md5[33];
+	md5[32] = '\0';
+	for (int i = 0; i < 32; i++)
+	{
+		md5[i] = fileinfo[267 + i];
+	}
+	for (int i = 0; i < fileinfo.length(); i++)
+	{
+		if (fileinfo[i] == 3)
+		{
+			path.append(fileinfo, 0, i);
+			break;
+		}
+	}
+	ifstream existsfile(path);
+	if (existsfile.is_open())
+	{
+		existsfile.close();
+		char existsfilemd5[33];
+		existsfilemd5[32] = '\0';
+		GetMD5(path.c_str(), md5);
+		if (strcmp(md5, existsfilemd5))
+		{
+			iResult = Close();
+			if (iResult == SOCKET_ERROR)
+			{
+				//WSAGetLastError();
+			}
+			return 0;
+		}
+		iResult = remove(path.c_str());
+		//remove file failed
+		if (iResult != 0)
+		{
+			//what to do
+		}
+	}
 	ofstream file(path, ios::app | ios::binary);
-    int size=Receive(); 
-	//int totalsize = 0;
-    do
+	iResult = Receive();
+	while (iResult > 0)
     {
-		//cout << totalsize << endl;
-        file.write(recvbuff,size); 
-		//totalsize += size;
-	} while ((size = Receive())>0);
-	//cout << file.tellp() << endl;
+		file.write(recvbuff, iResult);
+		iResult = Receive();
+	}
+
+	if (iResult == SOCKET_ERROR)
+	{
+		//an error occurs
+	}
+	else if (iResult == 0)
+	{
+		//the connection has been gracefully closed
+	}
+
+	//finish file transfer
 	file.close();
-	//if(size)
-	//{
-	//	//totalsize += size;
-	//	//cout << totalsize << endl;
-	//	file.write(recvbuff, size);
-	//}
-	//cout << "receive" << totalsize << endl;
-	Close();
+	iResult = Close();
+	if (iResult == SOCKET_ERROR)
+	{
+		//WSAGetLastError();
+	}
 	cout << "send over" << endl;
+	return 0;
 }
 
-//设置连接超时
+//set timeout
 void Socket::SetSocketOption()
 {
     int timeout = 3000; //3s
@@ -163,41 +242,57 @@ void Socket::SetSocketOption()
     setsockopt(LinkedSocket,SOL_SOCKET,SO_RCVTIMEO,(char *)&timeout,sizeof(int));
 }
 
-//接受
+//accept a connection
 SOCKET Socket::Accept()
 {
     int socketinfosize = sizeof(SOCKADDR_IN);
-    LinkedSocket = accept(ListenSocket, (struct sockaddr *) &socketinfo, &socketinfosize); 
+    LinkedSocket = accept(ListenSocket, (struct sockaddr *) &socketinfo, &socketinfosize);
     return LinkedSocket;
 }
 
-//发送字符串
+//send string buffer
 int Socket::Send(string sendbuff)
 {
     return send(LinkedSocket,sendbuff.c_str(),sendbuff.length(),0);
 }
 
-int Socket::Send(char* sendbuff,int buffsize)
+int Socket::Send(const char* sendbuff,const int buffsize)
 {
     return send(LinkedSocket,sendbuff,buffsize,0);
 }
-//接收
+//receive string buffer
 int Socket::Receive()
 {
     int nchar=recv(LinkedSocket, recvbuff, MAXSIZE, 0);
-    return nchar; 
+    return nchar;
 }
 
-//启动
-//这里包含错误检查，socket创建失败之类
+//start server
+//contains error checking，socket创建失败之类
 int Socket::ServerStart()
 {
+	int iResult;
     try
     {
-        ListenSocket=socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);   
-        //SetSocketOption();		
-        Bind();
-        Listen();
+        ListenSocket=socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
+		if (ListenSocket == INVALID_SOCKET)
+		{
+			cout << "socket error:" << WSAGetLastError() << endl;
+			return 0;
+		}
+        //SetSocketOption();
+		iResult = Bind();
+		if (iResult == SOCKET_ERROR)
+		{
+			//WSAGetLastError();
+			return 0;
+		}
+		iResult = Listen();
+		if (iResult == SOCKET_ERROR)
+		{
+			//WSAGetLastError();
+			return 0;
+		}
     }
     catch(...)
     {
@@ -207,15 +302,26 @@ int Socket::ServerStart()
 }
 int Socket::ClientStart()
 {
+	int iResult;
     try
-    {  
+    {
         LinkedSocket=socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
+		if (LinkedSocket == INVALID_SOCKET)
+		{
+			//WSAGetLastError();
+			return 0;
+		}
         //SetSocketOption();
 
 		//设置为非阻塞
 		//unsigned long ul = 1;
-		//ioctlsocket(LinkedSocket, FIONBIO, (unsigned long *)&ul);//设置成非阻塞模式。
-        Connect();
+		//ioctlsocket(LinkedSocket, FIONBIO, (unsigned long *)&ul);//设置成非阻塞模式
+		iResult = Connect();
+		if (iResult == SOCKET_ERROR)
+		{
+			//WSAGetLastError();
+			return 0;
+		}
     }
     catch(...)
     {
@@ -224,19 +330,19 @@ int Socket::ClientStart()
     return 1;
 }
 
-//关闭
+//close connected socket
 int Socket::Close()
 {
     return closesocket(LinkedSocket);
 }
 
-//获取ip
+//get connected socket ip
 string Socket::GetIp()
 {
     return inet_ntoa(socketinfo.sin_addr);
 }
 
-//获取端口
+//get connected socket port
 int Socket::GetPort()
 {
     return ntohs(socketinfo.sin_port);
