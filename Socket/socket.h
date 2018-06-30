@@ -1,8 +1,8 @@
-/*******************************************************************
-		[Jum] created on 20170824                                
-		函数命名格式单词全首字母大写，两个以上单词每个首字母大写 
+﻿/*******************************************************************
+		[Jum] created on 20170824
+		函数命名格式单词全首字母大写，两个以上单词每个首字母大写
 		本文件包含Socket类的定义
-                                                               
+
 ********************************************************************/
 
 #ifndef _SOCKET_H_
@@ -15,76 +15,76 @@ using namespace std;
 
 class __declspec(dllexport) Socket
 {
-//Attributes
+	//Attributes
 private:
-    static const int MAXSIZE = 4096;
+	static const int MAXSIZE = 4096;
 
-    //服务端用socekt
-    SOCKET ListenSocket; 
-    //已经连接成功的socekt
-    SOCKET LinkedSocket; 
+	//服务端用socekt
+	SOCKET ListenSocket;
+	//已经连接成功的socekt
+	SOCKET LinkedSocket;
 
-    //socekt信息
-    SOCKADDR_IN socketinfo;
-    SOCKADDR_IN server;
-
-public:
-    char recvbuff[MAXSIZE];
+	//socekt信息
+	SOCKADDR_IN socketinfo;
+	SOCKADDR_IN server;
 
 public:
-    Socket();
-    Socket(const int port);
-    Socket(const string ip,const int port);
-    virtual ~Socket();
-     
-//Operations
-    //创建socket
-    // int Socket();
+	char recvbuff[MAXSIZE];
 
-    //绑定端口
-    int Bind();
+public:
+	Socket();
+	Socket(const int port);
+	Socket(const string ip, const int port);
+	virtual ~Socket();
 
-    //监听端口
-    int Listen();
+	//Operations
+		//创建socket
+		// int Socket();
 
-    //连接端口
-    int Connect();
+		//绑定端口
+	int Bind();
 
-    //判断是否连接
-    void IsConnected();
+	//监听端口
+	int Listen();
 
-    //发送文件
-    int SendFile(const string localpath,const string serverpath);
+	//连接端口
+	int Connect();
 
-    //接收文件
-    int RecvFile();
+	//判断是否连接
+	void IsConnected();
 
-    //设置连接选项
-    void SetSocketOption();
+	//发送文件
+	int SendFile(const string localpath, const string serverpath);
 
-    //接受
-    SOCKET Accept();
+	//接收文件
+	int RecvFile();
 
-    //发送
-    int Send(string sendbuff);
-    int Send(const char* sendbuff,const int buffsize);
+	//设置连接选项
+	void SetSocketOption();
 
-    //接收
-    int Receive();
+	//接受
+	SOCKET Accept();
 
-    //启动
-    int ServerStart();
-    int ClientStart();
+	//发送
+	int Send(string sendbuff);
+	int Send(const char* sendbuff, const int buffsize);
 
-    //关闭
-    int Close();
+	//接收
+	int Receive();
 
-    //获取ip
-    string GetIp();
+	//启动
+	int ServerStart();
+	int ClientStart();
 
-    //获取端口
-    int GetPort();
-//Implemention
+	//关闭
+	int Close();
+
+	//获取ip
+	string GetIp();
+
+	//获取端口
+	int GetPort();
+	//Implemention
 };
 
 #endif

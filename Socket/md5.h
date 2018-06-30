@@ -1,4 +1,4 @@
-/*
+﻿/*
  **********************************************************************
  ** md5.h -- Header file for implementation of MD5                   **
  ** RSA Data Security, Inc. MD5 Message Digest Algorithm             **
