@@ -7,7 +7,7 @@
 #include<iostream>
 #include<sstream>
 //#include<windows.h>
-#include"..\Socket\socket.h"
+#include"..\FileTransmit\socket.h"
 #include"utils.h"
 using namespace std;
 

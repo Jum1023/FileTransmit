@@ -153,7 +153,7 @@
     <ClCompile Include="utils.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Socket\Socket.vcxproj">
+    <ProjectReference Include="..\FileTransmit\FileTransmit.vcxproj">
       <Project>{b255aad1-dbec-4d02-8563-c9883bb314d5}</Project>
     </ProjectReference>
   </ItemGroup>

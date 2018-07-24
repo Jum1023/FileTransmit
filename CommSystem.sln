@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
 VisualStudioVersion = 14.0.23107.0
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Socket", "Socket\Socket.vcxproj", "{B255AAD1-DBEC-4D02-8563-C9883BB314D5}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "FileTransmit", "FileTransmit\FileTransmit.vcxproj", "{B255AAD1-DBEC-4D02-8563-C9883BB314D5}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Utils", "Utils\Utils.vcxproj", "{43F2A929-16C0-4834-8B29-D3C9BA20AD93}"
 EndProject

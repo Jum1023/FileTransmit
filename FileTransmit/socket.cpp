@@ -175,7 +175,7 @@ int Socket::RecvFile()
 	{
 		md5[i] = fileinfo[267 + i];
 	}
-	for (int i = 0; i < fileinfo.length(); i++)
+	for (unsigned int i = 0; i < fileinfo.length(); i++)
 	{
 		if (fileinfo[i] == 3)
 		{
