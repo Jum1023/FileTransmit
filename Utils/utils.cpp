@@ -1,8 +1,7 @@
-﻿/*******************************************************************
-		[Jum] created on 20170824
-		本文件包含测试socekt类用到的函数
-
-********************************************************************/
+﻿/*
+Copyright (c) 2018 by JumHorn <JumHorn@gmail.com>
+This source code is licensed under the MIT License
+*/
 
 #include<iostream>
 #include<sstream>

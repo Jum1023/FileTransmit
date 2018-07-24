@@ -1,8 +1,7 @@
-﻿/*******************************************************************
-		[Jum] created on 20170824
-		本文件包含测试socekt类函数的定义
-
-********************************************************************/
+﻿/*
+Copyright (c) 2018 by JumHorn <JumHorn@gmail.com>
+This source code is licensed under the MIT License
+*/
 
 #ifndef _UTILS_H_
 #define _UTILS_H_

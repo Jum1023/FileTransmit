@@ -1,9 +1,7 @@
-﻿/*******************************************************************
-		[Jum] created on 20170824
-		函数命名格式单词全首字母大写，两个以上单词每个首字母大写
-		本文件包含Socket类的定义
-
-********************************************************************/
+﻿/*
+Copyright (c) 2018 by JumHorn <JumHorn@gmail.com>
+This source code is licensed under the MIT License
+*/
 
 #ifndef _SOCKET_H_
 #define _SOCKET_H_

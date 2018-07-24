@@ -1,8 +1,4 @@
-﻿#include "md5.h"
-#include<fstream>
-#include<iostream>
-using namespace std;
-/*
+﻿/*
  **********************************************************************
  ** md5.c                                                            **
  ** RSA Data Security, Inc. MD5 Message Digest Algorithm             **
@@ -36,6 +32,12 @@ using namespace std;
 /* -- include the following line if the md5.h header file is separate -- */
 /* #include "md5.h" */
 /* forward declaration */
+
+#include "md5.h"
+#include<fstream>
+#include<iostream>
+using namespace std;
+
 static void Transform(UINT4 *buf, UINT4 *in);
 static unsigned char PADDING[64] = {
 	0x80, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,

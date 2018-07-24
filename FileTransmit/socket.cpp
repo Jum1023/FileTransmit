@@ -1,8 +1,7 @@
-﻿/*******************************************************************
-		[Jum] created on 20170824
-		本文件包含Socket类的实现
-
-********************************************************************/
+﻿/*
+Copyright (c) 2018 by JumHorn <JumHorn@gmail.com>
+This source code is licensed under the MIT License
+*/
 
 #define _WINSOCK_DEPRECATED_NO_WARNINGS 
 #include<fstream>
