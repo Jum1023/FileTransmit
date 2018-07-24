@@ -26,7 +26,7 @@ Socket::Socket()
 	server.sin_addr.s_addr = inet_addr("127.0.0.1");
 }
 
-//服务端初始化方法
+
 Socket::Socket(const int port)
 {
 	WSADATA wsaData;
@@ -44,7 +44,7 @@ Socket::Socket(const int port)
 
 }
 
-//客户端初始化方法
+
 Socket::Socket(const string ip, const int port)
 {
 	WSADATA wsaData;
@@ -65,13 +65,12 @@ Socket::~Socket()
 {}
 
 
-//绑定端口
 int Socket::Bind()
 {
 	return bind(ListenSocket, (struct sockaddr *) &server, sizeof(SOCKADDR_IN));
 }
 
-//监听端口
+
 int Socket::Listen()
 {
 	return listen(ListenSocket, 5);
@@ -84,13 +83,13 @@ int Socket::Connect()
 	return connect(LinkedSocket, (struct sockaddr *) &server, sizeof(SOCKADDR_IN));
 }
 
-//判断是否连接
+
 void Socket::IsConnected()
 {}
 
 //send file
-//1表示上传成功
-//-1表示连接断开
+//1 means success
+//-1 means disconnected
 //-2 means localpath not exists
 int Socket::SendFile(const string localpath, const string serverpath)
 {
@@ -142,11 +141,11 @@ int Socket::SendFile(const string localpath, const string serverpath)
 	return 1;
 }
 
-//接收文件,非阻塞设置
+//accept file
 int Socket::RecvFile()
 {
 	string path, fileinfo;
-	//guarantee of geting 4096 bytes
+	//guarantee of getting 4096 bytes
 	int iResult, fileinfosize = MAXSIZE;
 	do
 	{
@@ -267,7 +266,7 @@ int Socket::Receive()
 }
 
 //start server
-//contains error checking，socket创建失败之类
+//contains error checking，socket creation failure included
 int Socket::ServerStart()
 {
 	int iResult;
@@ -312,9 +311,9 @@ int Socket::ClientStart()
 		}
 		//SetSocketOption();
 
-		//设置为非阻塞
+		//set non-blocked model
 		//unsigned long ul = 1;
-		//ioctlsocket(LinkedSocket, FIONBIO, (unsigned long *)&ul);//设置成非阻塞模式
+		//ioctlsocket(LinkedSocket, FIONBIO, (unsigned long *)&ul);//set non-blocked model
 		iResult = Connect();
 		if (iResult == SOCKET_ERROR)
 		{
