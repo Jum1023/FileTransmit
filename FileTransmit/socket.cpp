@@ -45,7 +45,7 @@ Socket::Socket(const int port)
 }
 
 
-Socket::Socket(const string ip, const int port)
+Socket::Socket(const string& ip, const int port)
 {
 	WSADATA wsaData;
 	int iResult;
@@ -249,12 +249,12 @@ SOCKET Socket::Accept()
 }
 
 //send string buffer
-int Socket::Send(string sendbuff)
+int Socket::Send(string sendbuff) const
 {
 	return send(LinkedSocket, sendbuff.c_str(), sendbuff.length(), 0);
 }
 
-int Socket::Send(const char* sendbuff, const int buffsize)
+int Socket::Send(const char* sendbuff, const int buffsize) const
 {
 	return send(LinkedSocket, sendbuff, buffsize, 0);
 }
@@ -335,13 +335,13 @@ int Socket::Close()
 }
 
 //get connected socket ip
-string Socket::GetIp()
+string Socket::GetIp() const
 {
 	return inet_ntoa(socketinfo.sin_addr);
 }
 
 //get connected socket port
-int Socket::GetPort()
+int Socket::GetPort() const
 {
 	return ntohs(socketinfo.sin_port);
 }

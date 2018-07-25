@@ -32,7 +32,7 @@ public:
 public:
 	Socket();
 	Socket(const int port);
-	Socket(const string ip, const int port);
+	Socket(const string& ip, const int port);
 	virtual ~Socket();
 
 	//Operations
@@ -64,8 +64,8 @@ public:
 	SOCKET Accept();
 
 	//发送
-	int Send(string sendbuff);
-	int Send(const char* sendbuff, const int buffsize);
+	int Send(string sendbuff) const;
+	int Send(const char* sendbuff, const int buffsize) const;
 
 	//接收
 	int Receive();
@@ -78,10 +78,10 @@ public:
 	int Close();
 
 	//获取ip
-	string GetIp();
+	string GetIp() const;
 
 	//获取端口
-	int GetPort();
+	int GetPort() const;
 	//Implemention
 };
 
