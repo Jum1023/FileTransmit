@@ -1,32 +1,38 @@
-# 通讯系统
-### 基本功能
+# Communication System
+### Basic Features
 
-1. 文件传输，文本传输(类似聊天功能)，采用tcp和udp两套协议
+1. File transfer,message transfer,based on both TCP and UDP protocal
 
-2. 显示tcp和udp报文
+2. Display TCP and UDP Datagram content both string and hex format
 
-3. 主动发送报文，从文本发送报文，能够控制发送速率
+3. Send datagram from textedit and files with the control of transmission rate
 
-4. 实现组播发送和接收的功能
+4. Complete send and receive datagram from multicast
 
-5. 报文录制和回放的功能
+5. Record and playback datagram
 
-6. 日志记录的功能
+6. Log record with hierarchy
 
-### 上层协议
+### Advanced protocol
 
 1. http
 
 2. rtsp
 
-### 模块设计
+### Module Design
 
-1. 网络底层跨平台
+1. Network cross platforms(boost)
 
-2. 设计内存池缓冲区
+2. Memory pool with high concurrency(eg:semphore for both producer and consumer)
 
-3. 设计跨平台的线程模型 
+3. thread model cross platforms(boost,C++14)
 
-### 技术细节
+### Technical Details
 
-1. socket option的阻塞和非阻塞实现
+1. socket option with block and non block settings
+2. socket option with join and drop the group
+3. json,xml config file settings
+4. breaking point supervention of files
+5. memory map with large files
+6. one physical address(mac) with many IPs(the same mac in the same local Local Area Networks)
+7. multi files transfer
