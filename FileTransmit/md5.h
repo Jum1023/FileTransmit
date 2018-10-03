@@ -52,7 +52,7 @@ void MD5Init (MD5_CTX *mdContext);
 void MD5Update (MD5_CTX *mdContext, unsigned char *inBuf, unsigned int inLen);
 void MD5Final (MD5_CTX *mdContext);
 
-//[Jum] created on 2017.9.21,including the way to get filemd5
+//[JumHorn] created on 2017.9.21,including the way to get filemd5
 int GetMD5(const char* filepath, char* md5);
 
 #endif
