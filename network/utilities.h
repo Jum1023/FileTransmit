@@ -6,14 +6,27 @@ Distributed under the MIT License. (See accompanying file LICENSE)
 #ifndef _UTILS_H_
 #define _UTILS_H_
 
-#include<windows.h>
+#include<string>
+#include<vector>
+using namespace std;
 
-//部分函数声明部分
-void TestBase();
-void TestSendFile();
-void TestMAC();
-void ThreadSendFile();
-DWORD WINAPI server(LPVOID lParam);
-DWORD WINAPI client(LPVOID lParam);
+class Utils
+{
+public:
+	Utils();
+	~Utils();
+	inline void setCommand(const string& cmd) { command = cmd; }
+	inline const string getCommand() const { return command; }
+	inline void setParam(const vector<string>& pa) { param = pa; }
+	inline const vector<string> getParam() const { return param; }
+	void addParam(const string& pa);
+	void excute() const;
+
+private:
+	//other implimentation
+private:
+	string command;
+	vector<string> param;
+};
 
 #endif
