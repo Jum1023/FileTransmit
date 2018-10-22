@@ -1,13 +1,13 @@
 ﻿/*
 Copyright (c) 2018 by JumHorn <JumHorn@gmail.com>
-This source code is licensed under the MIT License
+Distributed under the MIT License. (See accompanying file LICENSE)
 */
 
 #include<iostream>
 #include<sstream>
 //#include<windows.h>
 #include"..\FileTransmit\socket.h"
-#include"utils.h"
+#include"utilities.h"
 using namespace std;
 
 void TestMAC()

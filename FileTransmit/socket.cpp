@@ -1,6 +1,6 @@
 ﻿/*
 Copyright (c) 2018 by JumHorn <JumHorn@gmail.com>
-This source code is licensed under the MIT License
+Distributed under the MIT License. (See accompanying file LICENSE)
 */
 
 #define _WINSOCK_DEPRECATED_NO_WARNINGS 
