@@ -8,6 +8,7 @@ Distributed under the MIT License. (See accompanying file LICENSE)
 
 #include<string>
 #include<vector>
+#include"../InstantMessage/chat.h"
 using namespace std;
 
 class Utils
@@ -24,6 +25,7 @@ public:
 
 private:
 	//other implimentation
+	void SendMsg(Chat& c) const;
 private:
 	string command;
 	vector<string> param;

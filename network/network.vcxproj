@@ -154,6 +154,9 @@
     <ProjectReference Include="..\FileTransmit\FileTransmit.vcxproj">
       <Project>{b255aad1-dbec-4d02-8563-c9883bb314d5}</Project>
     </ProjectReference>
+    <ProjectReference Include="..\InstantMessage\InstantMessage.vcxproj">
+      <Project>{ceb4d784-b9e1-4dbb-ba3f-c0616f186d12}</Project>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -2,8 +2,23 @@
 #define _CHAT_H_
 
 #include "../macro/export.h"
+#include <iostream>
+#include <string>
+#include <boost/array.hpp>
+#include <boost/asio.hpp>
+using namespace boost::asio::ip;
 
 class SHAREOBJECT_EXPORT Chat
-{};
+{
+public:
+	Chat(boost::asio::io_context& io_context);
+	~Chat();
+
+	void sendMsg(const std::string& content, const std::string& ip, unsigned short port = 8192);
+
+private:
+	udp::socket socket;
+	boost::array<char, 65536> recvbuf;
+};
 
 #endif
