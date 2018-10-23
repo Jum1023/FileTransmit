@@ -5,12 +5,13 @@ Distributed under the MIT License. (See accompanying file LICENSE)
 #ifndef _SOCKET_H_
 #define _SOCKET_H_
 
+#include "../macro/export.h"
 #include<string>
 #include<iostream>
 #include<winsock2.h>
 using namespace std;
 
-class __declspec(dllexport) Socket
+class SHAREOBJECT_EXPORT Socket
 {
 	//Attributes
 private:
