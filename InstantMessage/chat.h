@@ -6,18 +6,18 @@
 #include <string>
 #include <boost/array.hpp>
 #include <boost/asio.hpp>
-using namespace boost::asio::ip;
+using namespace boost::asio;
 
 class SHAREOBJECT_EXPORT Chat
 {
 public:
-	Chat(boost::asio::io_context& io_context);
+	Chat(io_context& io_context);
 	~Chat();
 
 	void sendMsg(const std::string& content, const std::string& ip, unsigned short port = 8192);
 
 private:
-	udp::socket socket;
+	ip::udp::socket socket;
 	boost::array<char, 65536> recvbuf;
 };
 

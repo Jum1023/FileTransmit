@@ -73,6 +73,6 @@ void Utils::SendMsg(Chat& c) const
 			std::cerr << "Usage: network -c \"hello word\" -h host -p port" << std::endl;
 			return;
 		}
-		c.sendMsg(p["-p"], p["-h"]);
+		c.sendMsg(p["-c"], p["-h"]);
 	}
 }

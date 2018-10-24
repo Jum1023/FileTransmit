@@ -1,8 +1,9 @@
 #include "chat.h"
 
-Chat::Chat(boost::asio::io_context& io_context) :socket(io_context)
+Chat::Chat(io_context& io_context) :socket(io_context)
 {
-	socket.open(udp::v4());
+	socket.open(ip::udp::v4());
+	io_context.run();
 }
 
 Chat::~Chat()
@@ -11,15 +12,13 @@ Chat::~Chat()
 
 void Chat::sendMsg(const std::string& content, const std::string& ip, unsigned short port)
 {
-	udp::endpoint receiver_endpoint;
 	if (ip.empty())
 	{
-
+		socket.set_option(socket_base::broadcast(true));
+		socket.send_to(buffer(content), ip::udp::endpoint(ip::address_v4::broadcast(), port));
 	}
 	else
 	{
+		socket.send_to(buffer(content), ip::udp::endpoint(ip::address::from_string(ip), port));
 	}
-	receiver_endpoint.address(address::from_string(ip));
-	receiver_endpoint.port(port);
-	socket.send_to(boost::asio::buffer(content), receiver_endpoint);
 }
