@@ -12,12 +12,17 @@ class SHAREOBJECT_EXPORT Chat
 {
 public:
 	Chat(io_context& io_context);
-	~Chat();
+	virtual ~Chat();
 
-	void sendMsg(const std::string& content, const std::string& ip, unsigned short port = 8192);
+	void sendMsg(const std::string& content, const std::string& ip, unsigned short port = 8191);
+	void recvMsg();
+
+protected:
+	virtual void handleReceive(const boost::system::error_code& error, std::size_t bytes_transferred);
 
 private:
 	ip::udp::socket socket;
+	ip::udp::endpoint remotepoint;
 	boost::array<char, 65536> recvbuf;
 };
 

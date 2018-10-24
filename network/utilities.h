@@ -25,7 +25,7 @@ public:
 
 private:
 	//other implimentation
-	void SendMsg(Chat& c) const;
+	void sendMsg(Chat& c) const;
 private:
 	string command;
 	vector<string> param;

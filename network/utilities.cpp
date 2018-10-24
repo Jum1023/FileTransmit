@@ -24,24 +24,34 @@ void Utils::addParam(const string & pa)
 
 void Utils::excute() const
 {
-	if (command == "sendmsg")
+	try
 	{
-		//boost shared ptr command para
-		boost::asio::io_context io_context;
-		Chat c(io_context);
-		SendMsg(c);
+		if (command == "sendmsg")
+		{
+			//boost shared ptr command para
+			boost::asio::io_context io_context;
+			Chat c(io_context);
+			sendMsg(c);
+		}
+		else if (command == "recvmsg")
+		{
+			boost::asio::io_context io_context;
+			Chat c(io_context);
+			c.recvMsg();
+			io_context.run();
+		}
+		else
+		{
+			std::cerr << "command not exits" << std::endl;
+		}
 	}
-	else if (command == "")
+	catch (std::exception& e)
 	{
-
-	}
-	else
-	{
-		std::cerr << "command not exits" << std::endl;
+		std::cerr << e.what() << std::endl;
 	}
 }
 
-void Utils::SendMsg(Chat& c) const
+void Utils::sendMsg(Chat& c) const
 {
 	map<string,string> p;
 	if (param.empty() || (param.size() & 1) != 0)
@@ -61,8 +71,7 @@ void Utils::SendMsg(Chat& c) const
 	{
 		if (p.find("-c") == p.end() || p.find("-h") == p.end() || p.find("-p") == p.end())
 		{
-			std::cerr << "Usage: network -c \"hello word\" -h host -p port" << std::endl;
-			return;
+			std::cerr << "Usage: network -c \"hello word\" -h host [-p port]" << std::endl;
 		}
 		c.sendMsg(p["-c"], p["-h"], stoi(p["-p"]));
 	}
@@ -70,9 +79,12 @@ void Utils::SendMsg(Chat& c) const
 	{
 		if (p.count("-c") == 0 || p.count("-h") == 0)
 		{
-			std::cerr << "Usage: network -c \"hello word\" -h host -p port" << std::endl;
-			return;
+			std::cerr << "Usage: network -c \"hello word\" -h host [-p port]" << std::endl;
 		}
 		c.sendMsg(p["-c"], p["-h"]);
+	}
+	else
+	{
+		std::cerr << "Usage: network -c \"hello word\" -h host [-p port]" << std::endl;
 	}
 }
