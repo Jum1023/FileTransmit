@@ -1,10 +1,10 @@
 #include <boost/bind.hpp>
 #include "chat.h"
 
-Chat::Chat(io_context& io_context) :socket(io_context, ip::udp::endpoint(ip::udp::v4(), 8191))
+Chat::Chat(io_context& io_context) : ip::udp::socket(io_context, ip::udp::endpoint(ip::udp::v4(), 8191))
 {
-	//socket.open(ip::udp::v4());
-	socket.set_option(ip::udp::socket::reuse_address(true));
+	//open(ip::udp::v4());
+	set_option(ip::udp::socket::reuse_address(true));
 }
 
 Chat::~Chat()
@@ -15,18 +15,18 @@ void Chat::sendMsg(const std::string& content, const std::string& ip, unsigned s
 {
 	if (ip.empty())
 	{
-		socket.set_option(socket_base::broadcast(true));
-		socket.send_to(buffer(content), ip::udp::endpoint(ip::address_v4::broadcast(), port));
+		set_option(socket_base::broadcast(true));
+		send_to(buffer(content), ip::udp::endpoint(ip::address_v4::broadcast(), port));
 	}
 	else
 	{
-		socket.send_to(buffer(content), ip::udp::endpoint(ip::make_address(ip), port));
+		send_to(buffer(content), ip::udp::endpoint(ip::make_address(ip), port));
 	}
 }
 
 void Chat::recvMsg()
 {
-	socket.async_receive_from(buffer(recvbuf), remotepoint, boost::bind(&Chat::handleReceive, this, placeholders::error, placeholders::bytes_transferred));
+	async_receive_from(buffer(recvbuf), remotepoint, boost::bind(&Chat::handleReceive, this, placeholders::error, placeholders::bytes_transferred));
 }
 
 void Chat::handleReceive(const boost::system::error_code& error, std::size_t bytes_transferred)
