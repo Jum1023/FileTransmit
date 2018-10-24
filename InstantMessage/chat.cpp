@@ -19,6 +19,6 @@ void Chat::sendMsg(const std::string& content, const std::string& ip, unsigned s
 	}
 	else
 	{
-		socket.send_to(buffer(content), ip::udp::endpoint(ip::address::from_string(ip), port));
+		socket.send_to(buffer(content), ip::udp::endpoint(ip::make_address(ip), port));
 	}
 }
