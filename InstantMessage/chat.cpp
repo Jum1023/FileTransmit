@@ -35,7 +35,7 @@ void Chat::handleReceive(const boost::system::error_code& error, std::size_t byt
 	{
 		cout << remotepoint.address() << ":" << remotepoint.port() << "\t";
 		cout.write(recvbuf.data(), bytes_transferred) << endl;
-		//std::cout << remotepoint.protocol() << std::endl;
+		//cout << remotepoint.protocol() << endl;
 	}
 	recvMsg();
 }
