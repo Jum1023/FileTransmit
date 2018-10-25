@@ -7,6 +7,10 @@
 #include <boost/asio.hpp>
 #include "../macro/export.h"
 using namespace boost::asio;
+using std::string;
+using std::cout;
+using std::cerr;
+using std::endl;
 
 class SHAREOBJECT_EXPORT Chat : public ip::udp::socket
 {
@@ -14,7 +18,7 @@ public:
 	Chat(io_context& io_context);
 	~Chat();
 
-	void sendMsg(const std::string& content, const std::string& ip, unsigned short port = 8191);
+	void sendMsg(const string& content, const string& ip, unsigned short port = 8191);
 	void recvMsg();
 
 private:

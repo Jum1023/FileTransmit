@@ -11,7 +11,7 @@ Chat::~Chat()
 {
 }
 
-void Chat::sendMsg(const std::string& content, const std::string& ip, unsigned short port)
+void Chat::sendMsg(const string& content, const string& ip, unsigned short port)
 {
 	if (ip.empty())
 	{
@@ -33,8 +33,8 @@ void Chat::handleReceive(const boost::system::error_code& error, std::size_t byt
 {
 	if (!error)
 	{
-		std::cout << remotepoint.address() << ":" << remotepoint.port() << "\t";
-		std::cout.write(recvbuf.data(), bytes_transferred) << std::endl;
+		cout << remotepoint.address() << ":" << remotepoint.port() << "\t";
+		cout.write(recvbuf.data(), bytes_transferred) << endl;
 		//std::cout << remotepoint.protocol() << std::endl;
 	}
 	recvMsg();
