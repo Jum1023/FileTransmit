@@ -23,13 +23,18 @@ int Transmit::sendFile(const string & path, const string& ip, unsigned short por
 		return -1;
 	}
 	
-	//connect(sendsocket, resolver.resolve(tcp::v4(), 8192));
-
+	sendsocket.async_connect(tcp::endpoint(tcp::v4(), 8192), boost::bind(&Transmit::handleConnect, this, placeholders::error));
+	return 0;
 }
 
 void Transmit::recvFile()
 {
 	acceptor.async_accept(recvsocket, boost::bind(&Transmit::handleAccept, this, placeholders::error));
+}
+
+void Transmit::handleConnect(const boost::system::error_code & error)
+{
+	cout << "connect suceess" << endl;
 }
 
 void Transmit::handleAccept(const boost::system::error_code & error)
@@ -42,4 +47,6 @@ void Transmit::handleAccept(const boost::system::error_code & error)
 }
 
 void Transmit::handleRead(const boost::system::error_code& error, std::size_t bytes_transferred)
-{}
+{
+	cout << "read success" << endl;
+}
