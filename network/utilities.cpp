@@ -6,7 +6,6 @@ Distributed under the MIT License. (See accompanying file LICENSE)
 #include<iostream>
 #include<map>
 #include <boost/asio.hpp>
-#include"../FileTransmit/socket.h"
 #include"utilities.h"
 
 Utils::Utils()
@@ -17,9 +16,9 @@ Utils::~Utils()
 {
 }
 
-void Utils::addParam(const string & pa)
+void Utils::addParam(const string & para)
 {
-	param.push_back(pa);
+	param.push_back(para);
 }
 
 void Utils::excute() const
@@ -39,6 +38,19 @@ void Utils::excute() const
 			Chat c(io_context);
 			c.recvMsg();
 			io_context.run();
+		}
+		else if (command == "recvfile")
+		{
+			boost::asio::io_context io_context;
+			Transmit t(io_context);
+			t.recvFile();
+			io_context.run();
+		}
+		else if (command == "sendfile")
+		{
+			boost::asio::io_context io_context;
+			Transmit t(io_context);
+			sendFile(t);
 		}
 		else
 		{
@@ -71,7 +83,8 @@ void Utils::sendMsg(Chat& c) const
 	{
 		if (p.find("-c") == p.end() || p.find("-h") == p.end() || p.find("-p") == p.end())
 		{
-			std::cerr << "Usage: network -c \"hello word\" -h host [-p port]" << std::endl;
+			std::cerr << "Usage: network sendmsg -c \"hello word\" -h host [-p port]" << std::endl;
+			return;
 		}
 		c.sendMsg(p["-c"], p["-h"], stoi(p["-p"]));
 	}
@@ -79,12 +92,53 @@ void Utils::sendMsg(Chat& c) const
 	{
 		if (p.count("-c") == 0 || p.count("-h") == 0)
 		{
-			std::cerr << "Usage: network -c \"hello word\" -h host [-p port]" << std::endl;
+			std::cerr << "Usage: network sendmsg -c \"hello word\" -h host [-p port]" << std::endl;
+			return;
 		}
 		c.sendMsg(p["-c"], p["-h"]);
 	}
 	else
 	{
-		std::cerr << "Usage: network -c \"hello word\" -h host [-p port]" << std::endl;
+		std::cerr << "Usage: network sendmsg -c \"hello word\" -h host [-p port]" << std::endl;
+	}
+}
+
+void Utils::sendFile(Transmit & t) const
+{
+	map<string, string> p;
+	if (param.empty() || (param.size() & 1) == 1)
+	{
+		return;
+	}
+
+	for (vector<string>::const_iterator iter = param.begin(); iter != param.end(); iter++)
+	{
+		p[*iter++] = *(iter + 1);
+	}
+
+	//file content -f
+	//endpoint port -p
+	//endpoint host -h
+	if (p.size() == 3)
+	{
+		if (p.find("-f") == p.end() || p.find("-h") == p.end() || p.find("-p") == p.end())
+		{
+			std::cerr << "Usage: network sendfile -f path -h host [-p port]" << std::endl;
+			return;
+		}
+		t.sendFile(p["-f"], p["-h"], stoi(p["-p"]));
+	}
+	else if (p.size() == 2)
+	{
+		if (p.count("-c") == 0 || p.count("-h") == 0)
+		{
+			std::cerr << "Usage: network sendfile -f path -h host [-p port]" << std::endl;
+			return;
+		}
+		t.sendFile(p["-c"], p["-h"]);
+	}
+	else
+	{
+		std::cerr << "Usage: network sendfile -f path -h host [-p port]" << std::endl;
 	}
 }

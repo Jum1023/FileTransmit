@@ -23,7 +23,7 @@ int Transmit::sendFile(const string & path, const string& ip, unsigned short por
 		return -1;
 	}
 	
-	sendsocket.async_connect(tcp::endpoint(tcp::v4(), 8192), boost::bind(&Transmit::handleConnect, this, placeholders::error));
+	sendsocket.async_connect(tcp::endpoint(make_address(ip), 8192), boost::bind(&Transmit::handleConnect, this, placeholders::error));
 	return 0;
 }
 
