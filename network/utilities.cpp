@@ -51,6 +51,7 @@ void Utils::excute() const
 			boost::asio::io_context io_context;
 			Transmit t(io_context);
 			sendFile(t);
+			io_context.run();
 		}
 		else
 		{
@@ -130,12 +131,12 @@ void Utils::sendFile(Transmit & t) const
 	}
 	else if (p.size() == 2)
 	{
-		if (p.count("-c") == 0 || p.count("-h") == 0)
+		if (p.count("-f") == 0 || p.count("-h") == 0)
 		{
 			std::cerr << "Usage: network sendfile -f path -h host [-p port]" << std::endl;
 			return;
 		}
-		t.sendFile(p["-c"], p["-h"]);
+		t.sendFile(p["-f"], p["-h"]);
 	}
 	else
 	{

@@ -49,4 +49,5 @@ void Transmit::handleAccept(const boost::system::error_code & error)
 void Transmit::handleRead(const boost::system::error_code& error, std::size_t bytes_transferred)
 {
 	cout << "read success" << endl;
+	//async_write(recvsocket, buffer("accepted"), boost::bind(&Transmit::handleWrite, this, placeholders::error, placeholders::bytes_transferred));
 }
