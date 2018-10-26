@@ -1,10 +1,10 @@
 #include <boost/bind.hpp>
 #include "chat.h"
 
-Chat::Chat(io_context& io_context) : ip::udp::socket(io_context, ip::udp::endpoint(ip::udp::v4(), 8191))
+Chat::Chat(io_context& io_context) : ip::udp::socket(io_context, udp::endpoint(udp::v4(), 8191))
 {
 	//open(ip::udp::v4());
-	set_option(ip::udp::socket::reuse_address(true));
+	set_option(udp::socket::reuse_address(true));
 }
 
 Chat::~Chat()
@@ -16,11 +16,11 @@ void Chat::sendMsg(const string& content, const string& ip, unsigned short port)
 	if (ip.empty())
 	{
 		set_option(socket_base::broadcast(true));
-		send_to(buffer(content), ip::udp::endpoint(ip::address_v4::broadcast(), port));
+		send_to(buffer(content), udp::endpoint(address_v4::broadcast(), port));
 	}
 	else
 	{
-		send_to(buffer(content), ip::udp::endpoint(ip::make_address(ip), port));
+		send_to(buffer(content), udp::endpoint(make_address(ip), port));
 	}
 }
 

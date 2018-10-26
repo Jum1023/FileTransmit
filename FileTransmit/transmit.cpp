@@ -5,7 +5,7 @@ using std::ifstream;
 
 Transmit::Transmit(io_context& io_context)
 	:recvsocket(io_context), sendsocket(io_context),
-	acceptor(io_context, ip::tcp::endpoint(ip::tcp::v4(), 8192))
+	acceptor(io_context, tcp::endpoint(tcp::v4(), 8192))
 {
 }
 
@@ -23,7 +23,7 @@ int Transmit::sendFile(const string & path, const string& ip, unsigned short por
 		return -1;
 	}
 	
-	connect(sendsocket, resolver.resolve(ip::tcp::v4(), 8192));
+	//connect(sendsocket, resolver.resolve(tcp::v4(), 8192));
 
 }
 

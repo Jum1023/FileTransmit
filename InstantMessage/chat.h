@@ -7,12 +7,13 @@
 #include <boost/asio.hpp>
 #include "../macro/export.h"
 using namespace boost::asio;
+using namespace boost::asio::ip;
 using std::string;
 using std::cout;
 using std::cerr;
 using std::endl;
 
-class SHAREOBJECT_EXPORT Chat : public ip::udp::socket
+class SHAREOBJECT_EXPORT Chat : public udp::socket
 {
 public:
 	Chat(io_context& io_context);
@@ -25,7 +26,7 @@ private:
 	void handleReceive(const boost::system::error_code& error, std::size_t bytes_transferred);
 
 private:
-	ip::udp::endpoint remotepoint;
+	udp::endpoint remotepoint;
 	boost::array<char, 65536> recvbuf;
 };
 

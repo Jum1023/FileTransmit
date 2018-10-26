@@ -6,6 +6,7 @@
 #include <boost/array.hpp>
 #include "../macro/export.h"
 using namespace boost::asio;
+using namespace boost::asio::ip;
 using std::string;
 using std::cout;
 using std::cerr;
@@ -26,11 +27,11 @@ private:
 	void handleAccept(const boost::system::error_code& error);
 	void handleRead(const boost::system::error_code& error, std::size_t bytes_transferred);
 private:
-	ip::tcp::socket sendsocket;
-	ip::tcp::socket recvsocket;
+	tcp::socket sendsocket;
+	tcp::socket recvsocket;
 
-	ip::tcp::endpoint remotepoint;
-	ip::tcp::acceptor acceptor;
+	tcp::endpoint remotepoint;
+	tcp::acceptor acceptor;
 	boost::array<char, 65536> recvbuf;
 
 	double progress;
