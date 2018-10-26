@@ -35,6 +35,7 @@ void Transmit::recvFile()
 void Transmit::handleConnect(const boost::system::error_code & error)
 {
 	cout << "connect suceess" << endl;
+	async_write(sendsocket, buffer("这是传输内容"), boost::bind(&Transmit::handleWrite, this, placeholders::error, placeholders::bytes_transferred));
 }
 
 void Transmit::handleAccept(const boost::system::error_code & error)
@@ -49,5 +50,12 @@ void Transmit::handleAccept(const boost::system::error_code & error)
 void Transmit::handleRead(const boost::system::error_code& error, std::size_t bytes_transferred)
 {
 	cout << "read success" << endl;
+	cout.write(recvbuf.data(), bytes_transferred) << endl;
+	//async_write(recvsocket, buffer("accepted"), boost::bind(&Transmit::handleWrite, this, placeholders::error, placeholders::bytes_transferred));
+}
+
+void Transmit::handleWrite(const boost::system::error_code& error, std::size_t bytes_transferred)
+{
+	cout << "write success" << endl;
 	//async_write(recvsocket, buffer("accepted"), boost::bind(&Transmit::handleWrite, this, placeholders::error, placeholders::bytes_transferred));
 }
