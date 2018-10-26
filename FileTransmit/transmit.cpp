@@ -1,3 +1,8 @@
+/*
+Copyright (c) 2018 by JumHorn <JumHorn@gmail.com>
+Distributed under the MIT License. (See accompanying file LICENSE)
+*/
+
 #include <fstream>
 #include <boost/bind.hpp>
 #include "transmit.h"

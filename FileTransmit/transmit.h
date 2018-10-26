@@ -1,6 +1,11 @@
 #ifndef _TRANSMIT_H_
 #define _TRANSMIT_H_
 
+/*
+Copyright (c) 2018 by JumHorn <JumHorn@gmail.com>
+Distributed under the MIT License. (See accompanying file LICENSE)
+*/
+
 #include <iostream>
 #include <boost/asio.hpp>
 #include <boost/array.hpp>
