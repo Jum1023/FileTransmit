@@ -38,6 +38,7 @@ private:
 	tcp::endpoint remotepoint;
 	tcp::acceptor acceptor;
 	boost::array<char, 65536> recvbuf;
+	boost::array<char, 1024> sendbuf;
 
 	std::ifstream fin;
 	std::streamsize filesize;
