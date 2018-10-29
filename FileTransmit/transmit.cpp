@@ -18,7 +18,7 @@ Transmit::~Transmit()
 {
 }
 
-int Transmit::sendFile(const string & path, const string& ip, unsigned short port)
+int Transmit::sendFile(const string& path, const string& ip, unsigned short port)
 {
 	//check if file exists
 	ifstream fin(path, std::ios::binary);
@@ -37,13 +37,13 @@ void Transmit::recvFile()
 	acceptor.async_accept(recvsocket, boost::bind(&Transmit::handleAccept, this, placeholders::error));
 }
 
-void Transmit::handleConnect(const boost::system::error_code & error)
+void Transmit::handleConnect(const boost::system::error_code& error)
 {
 	cout << "connect suceess" << endl;
 	async_write(sendsocket, buffer("这是传输内容"), boost::bind(&Transmit::handleWrite, this, placeholders::error, placeholders::bytes_transferred));
 }
 
-void Transmit::handleAccept(const boost::system::error_code & error)
+void Transmit::handleAccept(const boost::system::error_code& error)
 {
 	if (error)
 	{
