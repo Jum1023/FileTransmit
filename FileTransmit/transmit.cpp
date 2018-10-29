@@ -3,10 +3,11 @@ Copyright (c) 2018 by JumHorn <JumHorn@gmail.com>
 Distributed under the MIT License. (See accompanying file LICENSE)
 */
 
-#include <fstream>
+#include <sstream>
+#include <vector>
 #include <boost/bind.hpp>
+#include <boost/algorithm/string.hpp>
 #include "transmit.h"
-using std::ifstream;
 
 Transmit::Transmit(io_context& io_context)
 	:recvsocket(io_context), sendsocket(io_context),
@@ -18,16 +19,18 @@ Transmit::~Transmit()
 {
 }
 
-int Transmit::sendFile(const string& path, const string& ip, unsigned short port)
+int Transmit::sendFile(const std::string& path, const std::string& ip, unsigned short port)
 {
 	//check if file exists
-	ifstream fin(path, std::ios::binary);
+	fin.open(path, std::ios::binary);
 	if (!fin)
 	{
-		cerr << "file not exit" << endl;
+		std::cerr << "file not exit" << std::endl;
 		return -1;
 	}
-	
+	std::vector<std::string> pathsplit;
+	boost::split(pathsplit, path, boost::is_any_of("/"));
+	filename = pathsplit.back();
 	sendsocket.async_connect(tcp::endpoint(make_address(ip), 8192), boost::bind(&Transmit::handleConnect, this, placeholders::error));
 	return 0;
 }
@@ -39,8 +42,13 @@ void Transmit::recvFile()
 
 void Transmit::handleConnect(const boost::system::error_code& error)
 {
-	cout << "connect suceess" << endl;
-	async_write(sendsocket, buffer("这是传输内容"), boost::bind(&Transmit::handleWrite, this, placeholders::error, placeholders::bytes_transferred));
+	if (error)
+	{
+		return;
+	}
+	std::stringstream ss;
+	ss << fin.gcount() << filename;
+	async_write(sendsocket, buffer(ss.str()), boost::bind(&Transmit::handleWrite, this, placeholders::error, placeholders::bytes_transferred));
 }
 
 void Transmit::handleAccept(const boost::system::error_code& error)
@@ -48,19 +56,20 @@ void Transmit::handleAccept(const boost::system::error_code& error)
 	if (error)
 	{
 		recvFile();
+		return;
 	}
 	async_read(recvsocket, buffer(recvbuf), boost::bind(&Transmit::handleRead, this, placeholders::error, placeholders::bytes_transferred));
 }
 
 void Transmit::handleRead(const boost::system::error_code& error, std::size_t bytes_transferred)
 {
-	cout << "read success" << endl;
-	cout.write(recvbuf.data(), bytes_transferred) << endl;
+	std::cout << "read success" << std::endl;
+	std::cout.write(recvbuf.data(), bytes_transferred) << std::endl;
 	//async_write(recvsocket, buffer("accepted"), boost::bind(&Transmit::handleWrite, this, placeholders::error, placeholders::bytes_transferred));
 }
 
 void Transmit::handleWrite(const boost::system::error_code& error, std::size_t bytes_transferred)
 {
-	cout << "write success" << endl;
+	std::cout << "write success" << std::endl;
 	//async_write(recvsocket, buffer("accepted"), boost::bind(&Transmit::handleWrite, this, placeholders::error, placeholders::bytes_transferred));
 }
