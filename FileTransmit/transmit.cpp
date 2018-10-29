@@ -22,7 +22,7 @@ int Transmit::sendFile(const string& path, const string& ip, unsigned short port
 {
 	//check if file exists
 	ifstream fin(path, std::ios::binary);
-	if (fin)
+	if (!fin)
 	{
 		cerr << "file not exit" << endl;
 		return -1;
