@@ -31,6 +31,10 @@ int Transmit::sendFile(const std::string& path, const std::string& ip, unsigned 
 	std::vector<std::string> pathsplit;
 	boost::split(pathsplit, path, boost::is_any_of("/\\"));
 	filename = pathsplit.back();
+	fin.seekg(0, std::ios::end);
+	filesize = fin.tellg();
+	//fin.clear();
+	fin.seekg(0, std::ios::beg);
 	sendsocket.async_connect(tcp::endpoint(make_address(ip), 8192), boost::bind(&Transmit::handleConnect, this, placeholders::error));
 	return 0;
 }
@@ -47,7 +51,7 @@ void Transmit::handleConnect(const boost::system::error_code& error)
 		return;
 	}
 	std::stringstream ss;
-	ss << fin.gcount() << filename;
+	ss << filesize << '|' << filename;
 	ss >> sendbuf.data();
 	async_write(sendsocket, buffer(sendbuf), boost::bind(&Transmit::handleWrite, this, placeholders::error, placeholders::bytes_transferred));
 }
