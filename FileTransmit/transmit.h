@@ -30,6 +30,7 @@ private:
 	void handleRead(const boost::system::error_code& error, std::size_t bytes_transferred);
 	void handleWrite(const boost::system::error_code& error, std::size_t bytes_transferred);
 	void handleConnect(const boost::system::error_code& error);
+	void send(const boost::system::error_code& error);
 
 private:
 	tcp::socket sendsocket;

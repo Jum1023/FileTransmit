@@ -53,7 +53,8 @@ void Transmit::handleConnect(const boost::system::error_code& error)
 	std::stringstream ss;
 	ss << filesize << '|' << filename;
 	ss >> sendbuf.data();
-	async_write(sendsocket, buffer(sendbuf), boost::bind(&Transmit::handleWrite, this, placeholders::error, placeholders::bytes_transferred));
+	ss.seekg(0, std::ios::end);
+	async_write(sendsocket, buffer(sendbuf,ss.tellg()), boost::bind(&Transmit::handleRead, this, placeholders::error, placeholders::bytes_transferred));
 }
 
 void Transmit::handleAccept(const boost::system::error_code& error)
@@ -68,13 +69,39 @@ void Transmit::handleAccept(const boost::system::error_code& error)
 
 void Transmit::handleRead(const boost::system::error_code& error, std::size_t bytes_transferred)
 {
-	std::cout << "read success" << std::endl;
-	std::cout.write(recvbuf.data(), bytes_transferred) << std::endl;
-	//async_write(recvsocket, buffer("accepted"), boost::bind(&Transmit::handleWrite, this, placeholders::error, placeholders::bytes_transferred));
+	if (error)
+	{
+		return;
+	}
+	switch (recvbuf[0])
+	{
+	case 0://ready for accepting file
+		//send();
+		break;
+	case 1://can't accept file
+		break;
+	case 2://file already exists
+		break;
+	default:
+		break;
+	}
 }
 
 void Transmit::handleWrite(const boost::system::error_code& error, std::size_t bytes_transferred)
 {
-	std::cout << "write success" << std::endl;
-	//async_write(recvsocket, buffer("accepted"), boost::bind(&Transmit::handleWrite, this, placeholders::error, placeholders::bytes_transferred));
+	if (error)
+	{
+		return;
+	}
+	async_read(sendsocket, buffer(recvbuf), boost::bind(&Transmit::handleRead, this, placeholders::error, placeholders::bytes_transferred));
+}
+
+void Transmit::send(const boost::system::error_code& error)
+{
+	if (error)
+	{
+		return;
+	}
+	fin.read(sendbuf.data(), 1000);
+	async_write(sendsocket, buffer(sendbuf), boost::bind(&Transmit::send, this, placeholders::error));
 }
