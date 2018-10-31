@@ -14,7 +14,7 @@ Distributed under the MIT License. (See accompanying file LICENSE)
 using namespace boost::asio;
 using namespace boost::asio::ip;
 
-class SHAREOBJECT_EXPORT Transmit
+class SHAREDOBJECT_EXPORT Transmit
 {
 public:
 	Transmit(io_context& io_context);

@@ -13,7 +13,7 @@ using std::cout;
 using std::cerr;
 using std::endl;
 
-class SHAREOBJECT_EXPORT Chat : public udp::socket
+class SHAREDOBJECT_EXPORT Chat : public udp::socket
 {
 public:
 	Chat(io_context& io_context);

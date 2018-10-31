@@ -9,6 +9,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "InstantMessage", "InstantMe
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "network", "network\network.vcxproj", "{A76BC75D-AC45-49E9-8946-4ECBB0806A0F}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "configuration", "configuration\configuration.vcxproj", "{CF22B9A1-9013-460F-9BD8-2FFA5BB1BE78}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -41,6 +43,14 @@ Global
 		{A76BC75D-AC45-49E9-8946-4ECBB0806A0F}.Release|Win32.Build.0 = Release|Win32
 		{A76BC75D-AC45-49E9-8946-4ECBB0806A0F}.Release|x64.ActiveCfg = Release|x64
 		{A76BC75D-AC45-49E9-8946-4ECBB0806A0F}.Release|x64.Build.0 = Release|x64
+		{CF22B9A1-9013-460F-9BD8-2FFA5BB1BE78}.Debug|Win32.ActiveCfg = Debug|Win32
+		{CF22B9A1-9013-460F-9BD8-2FFA5BB1BE78}.Debug|Win32.Build.0 = Debug|Win32
+		{CF22B9A1-9013-460F-9BD8-2FFA5BB1BE78}.Debug|x64.ActiveCfg = Debug|x64
+		{CF22B9A1-9013-460F-9BD8-2FFA5BB1BE78}.Debug|x64.Build.0 = Debug|x64
+		{CF22B9A1-9013-460F-9BD8-2FFA5BB1BE78}.Release|Win32.ActiveCfg = Release|Win32
+		{CF22B9A1-9013-460F-9BD8-2FFA5BB1BE78}.Release|Win32.Build.0 = Release|Win32
+		{CF22B9A1-9013-460F-9BD8-2FFA5BB1BE78}.Release|x64.ActiveCfg = Release|x64
+		{CF22B9A1-9013-460F-9BD8-2FFA5BB1BE78}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
