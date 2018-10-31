@@ -28,8 +28,9 @@ public:
 private:
 	void handleConnect(const boost::system::error_code& error);
 	void handleAccept(const boost::system::error_code& error);
-	void handleClientRead(const boost::system::error_code& error, std::size_t bytes_transferred);
+	void handleClientRead(const boost::system::error_code& error);
 	void handleServerRead(const boost::system::error_code& error, std::size_t bytes_transferred);
+	void handleServerWrite(const boost::system::error_code& error);
 	void send(const boost::system::error_code& error);
 	void sendover(const boost::system::error_code& error);
 	void recv(const boost::system::error_code& error,std::size_t bytes_transferred);

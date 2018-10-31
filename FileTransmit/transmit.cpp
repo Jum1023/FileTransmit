@@ -7,6 +7,7 @@ Distributed under the MIT License. (See accompanying file LICENSE)
 #include <vector>
 #include <boost/bind.hpp>
 #include <boost/algorithm/string.hpp>
+#include <boost/filesystem.hpp>
 #include "transmit.h"
 
 Transmit::Transmit(io_context& io_context)
@@ -54,7 +55,7 @@ void Transmit::handleConnect(const boost::system::error_code& error)
 	ss << filesize << '|' << filename;
 	ss >> sendbuf.data();
 	ss.seekg(0, std::ios::end);
-	async_write(sendsocket, buffer(sendbuf,ss.tellg()), boost::bind(&Transmit::handleClientRead, this, placeholders::error, placeholders::bytes_transferred));
+	async_write(sendsocket, buffer(sendbuf,ss.tellg()), boost::bind(&Transmit::handleClientRead, this, placeholders::error));
 }
 
 void Transmit::handleAccept(const boost::system::error_code& error)
@@ -67,7 +68,7 @@ void Transmit::handleAccept(const boost::system::error_code& error)
 	async_read(recvsocket, buffer(recvbuf), boost::bind(&Transmit::handleServerRead, this, placeholders::error, placeholders::bytes_transferred));
 }
 
-void Transmit::handleClientRead(const boost::system::error_code& error, std::size_t bytes_transferred)
+void Transmit::handleClientRead(const boost::system::error_code& error)
 {
 	if (error)
 	{
@@ -105,17 +106,31 @@ void Transmit::handleServerRead(const boost::system::error_code& error, std::siz
 	filename = strsplit[1];
 
 	//if file exists
-	fout.open(filename,std::ios::binary||std::ios::_Noreplace);
+	if (boost::filesystem::exists(filename))
+	{
+
+	}
+
+	fout.open(filename,std::ios::binary||std::ios::trunc);
 	if (fout)
 	{
 		sendbuf[0] = 0;
-		async_write(recvsocket, buffer(sendbuf, 1), boost::bind(&Transmit::recv, this, placeholders::error, placeholders::bytes_transferred));
+		async_write(recvsocket, buffer(sendbuf, 1), boost::bind(&Transmit::handleServerWrite, this, placeholders::error));
 	}
 	else
 	{
 		sendbuf[0] = 1;
-		async_write(recvsocket, buffer(sendbuf, 1), boost::bind(&Transmit::recv, this, placeholders::error, placeholders::bytes_transferred));
+		async_write(recvsocket, buffer(sendbuf, 1), boost::bind(&Transmit::handleServerWrite, this, placeholders::error));
 	}
+}
+
+void Transmit::handleServerWrite(const boost::system::error_code& error)
+{
+	if (error)
+	{
+		return;
+	}
+	async_read(recvsocket, buffer(recvbuf), boost::bind(&Transmit::recv, this, placeholders::error, placeholders::bytes_transferred));
 }
 
 void Transmit::send(const boost::system::error_code& error)
