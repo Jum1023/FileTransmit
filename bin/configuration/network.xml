@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<network>
+  
+  <address id="local">
+	  <host>127.0.0.1</host>
+		<port>8192</port>
+	</address>
+
+  <address id="send">
+    <host>127.0.0.1</host>
+    <port>8192</port>
+  </address>
+
+  <address id="recv">
+    <host>127.0.0.1</host>
+    <port>8192</port>
+  </address>
+  
+</network>
