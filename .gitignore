@@ -1,0 +1,14 @@
+.DS_Store
+*.sdf
+*.dll
+*.lib
+*.opensdf
+.vs
+*.user
+*.exp
+*.exe
+*ilk
+*.pdb
+
+Debug
+Release

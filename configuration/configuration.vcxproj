@@ -79,6 +79,7 @@
     <LinkIncremental>true</LinkIncremental>
     <IncludePath>F:\JumHorn\boost_1_68_0;$(IncludePath)</IncludePath>
     <LibraryWPath>F:\JumHorn\boost_1_68_0\stage\lib;$(LibraryPath)</LibraryWPath>
+    <OutDir>$(SolutionDir)bin</OutDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
