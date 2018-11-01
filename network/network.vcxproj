@@ -73,13 +73,15 @@
     <LinkIncremental>true</LinkIncremental>
     <IncludePath>F:\JumHorn\boost_1_68_0;$(IncludePath)</IncludePath>
     <LibraryPath>F:\JumHorn\boost_1_68_0\stage\lib;$(LibraryPath)</LibraryPath>
-    <OutDir>$(SolutionDir)bin</OutDir>
+    <OutDir>$(SolutionDir)bin\</OutDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
+    <IncludePath>F:\JumHorn\boost_1_68_0;$(IncludePath)</IncludePath>
+    <LibraryPath>F:\JumHorn\boost_1_68_0\stage\lib;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
@@ -152,6 +154,9 @@
     <ClCompile Include="utilities.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\configuration\configuration.vcxproj">
+      <Project>{cf22b9a1-9013-460f-9bd8-2ffa5bb1be78}</Project>
+    </ProjectReference>
     <ProjectReference Include="..\FileTransmit\FileTransmit.vcxproj">
       <Project>{b255aad1-dbec-4d02-8563-c9883bb314d5}</Project>
     </ProjectReference>

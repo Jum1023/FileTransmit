@@ -74,13 +74,15 @@
     <LinkIncremental>true</LinkIncremental>
     <IncludePath>F:\JumHorn\boost_1_68_0;$(IncludePath)</IncludePath>
     <LibraryPath>F:\JumHorn\boost_1_68_0\stage\lib;$(LibraryPath)</LibraryPath>
-    <OutDir>$(SolutionDir)bin</OutDir>
+    <OutDir>$(SolutionDir)bin\</OutDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
+    <IncludePath>F:\JumHorn\boost_1_68_0;$(IncludePath)</IncludePath>
+    <LibraryPath>F:\JumHorn\boost_1_68_0\stage\lib;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
