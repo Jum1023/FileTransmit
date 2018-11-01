@@ -8,9 +8,6 @@ Distributed under the MIT License. (See accompanying file LICENSE)
 
 #include<string>
 #include<vector>
-#include"../InstantMessage/chat.h"
-#include"../FileTransmit/transmit.h"
-#include"../configuration/config.h"
 using namespace std;
 
 class Utils

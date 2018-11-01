@@ -7,6 +7,9 @@ Distributed under the MIT License. (See accompanying file LICENSE)
 #include<map>
 #include <boost/asio.hpp>
 #include"utilities.h"
+#include"../InstantMessage/chat.h"
+#include"../FileTransmit/transmit.h"
+#include"../configuration/config.h"
 
 Utils::Utils()
 {
@@ -152,5 +155,28 @@ void Utils::sendFile() const
 
 void Utils::showConfig() const
 {
+	Config c;
+	c.load("./configuration/network.xml");
 
+	map<string, string> p;
+	if (param.empty() || (param.size() & 1) == 1)
+	{
+		return;
+	}
+
+	for (vector<string>::const_iterator iter = param.begin(); iter != param.end(); iter++)
+	{
+		p[*iter++] = *(iter + 1);
+	}
+
+	//xml path -p
+	//xml attribute -a
+	if (p.find("-p") != p.end())
+	{
+		std::cout << c.getText(p["-p"]) << std::endl;
+	}
+	else
+	{
+		std::cerr << "Usage: network config -p path" << std::endl;
+	}
 }

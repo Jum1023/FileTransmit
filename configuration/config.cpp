@@ -15,9 +15,7 @@ Config::~Config()
 
 void Config::load(const std::string& filename)
 {
-	read_xml(filename, tree, xml_parser::no_comments || xml_parser::trim_whitespace);
-	std::string f = tree.get<std::string>("debug.filename");
-	int t=tree.get("debug.level", 0);
+	read_xml(filename, tree, xml_parser::trim_whitespace);
 }
 
 void Config::save(const std::string& filename)
@@ -27,7 +25,8 @@ void Config::save(const std::string& filename)
 
 std::string Config::getText(const std::string& path)
 {
-	return std::string();
+	std::string tmp= tree.get<std::string>(path);
+	return tree.get<std::string>(path);
 }
 
 std::string Config::getAttr(const std::string& path)
