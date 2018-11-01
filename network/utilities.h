@@ -10,6 +10,7 @@ Distributed under the MIT License. (See accompanying file LICENSE)
 #include<vector>
 #include"../InstantMessage/chat.h"
 #include"../FileTransmit/transmit.h"
+#include"../configuration/config.h"
 using namespace std;
 
 class Utils
@@ -26,8 +27,10 @@ public:
 
 private:
 	//other implimentation
-	void sendMsg(Chat& c) const;
-	void sendFile(Transmit& t) const;
+	void sendMsg() const;
+	void sendFile() const;
+	void showConfig() const;
+
 private:
 	string command;
 	vector<string> param;

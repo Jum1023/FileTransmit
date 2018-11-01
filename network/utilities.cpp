@@ -27,10 +27,7 @@ void Utils::excute() const
 	{
 		if (command == "sendmsg")
 		{
-			//boost shared ptr command para
-			boost::asio::io_context io_context;
-			Chat c(io_context);
-			sendMsg(c);
+			sendMsg();
 		}
 		else if (command == "recvmsg")
 		{
@@ -48,10 +45,11 @@ void Utils::excute() const
 		}
 		else if (command == "sendfile")
 		{
-			boost::asio::io_context io_context;
-			Transmit t(io_context);
-			sendFile(t);
-			io_context.run();
+			sendFile();
+		}
+		else if (command == "config")
+		{
+			showConfig();
 		}
 		else
 		{
@@ -64,8 +62,11 @@ void Utils::excute() const
 	}
 }
 
-void Utils::sendMsg(Chat& c) const
+void Utils::sendMsg() const
 {
+	boost::asio::io_context io_context;
+	Chat c(io_context);
+
 	map<string,string> p;
 	if (param.empty() || (param.size() & 1) != 0)
 	{
@@ -104,8 +105,11 @@ void Utils::sendMsg(Chat& c) const
 	}
 }
 
-void Utils::sendFile(Transmit & t) const
+void Utils::sendFile() const
 {
+	boost::asio::io_context io_context;
+	Transmit t(io_context);
+
 	map<string, string> p;
 	if (param.empty() || (param.size() & 1) == 1)
 	{
@@ -142,4 +146,11 @@ void Utils::sendFile(Transmit & t) const
 	{
 		std::cerr << "Usage: network sendfile -f path -h host [-p port]" << std::endl;
 	}
+
+	io_context.run();
+}
+
+void Utils::showConfig() const
+{
+
 }
