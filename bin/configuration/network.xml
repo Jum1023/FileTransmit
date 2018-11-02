@@ -7,13 +7,13 @@
 	</address>
 
   <address id="send">
-    <host>127.0.0.1</host>
-    <port>8192</port>
+    <host>239.0.0.1</host>
+    <port>8191</port>
   </address>
 
   <address id="recv">
-    <host>127.0.0.1</host>
-    <port>8192</port>
+    <host>192.168.1.100</host>
+    <port>8193</port>
   </address>
   
 </network>
