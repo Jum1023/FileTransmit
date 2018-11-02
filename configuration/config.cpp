@@ -15,7 +15,7 @@ Config::~Config()
 
 void Config::load(const std::string& filename)
 {
-	read_xml(filename, tree, xml_parser::trim_whitespace);
+	read_xml(filename, tree, xml_parser::no_comments | xml_parser::trim_whitespace);
 }
 
 void Config::save(const std::string& filename)
