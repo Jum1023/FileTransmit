@@ -16,11 +16,12 @@ class SHAREDOBJECT_EXPORT Config
 public:
 	Config();
 	~Config();
+
 	void load(const std::string& filename);
 	void save(const std::string& filename);
 
 	std::string getText(const std::string& path);
-	std::string getAttr(const std::string& path);
+	std::string getAttr(const std::string& path, const std::string& attr);
 
 private:
 	ptree tree;

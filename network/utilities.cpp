@@ -170,13 +170,18 @@ void Utils::showConfig() const
 	}
 
 	//xml path -p
+	//xml attr -a
 	//xml attribute -a
-	if (p.find("-p") != p.end())
+	if (p.find("-a") != p.end())
+	{
+		std::cout << c.getAttr(p["-p"], p["-a"]) << std::endl;
+	}
+	else if (p.find("-p") != p.end())
 	{
 		std::cout << c.getText(p["-p"]) << std::endl;
 	}
 	else
 	{
-		std::cerr << "Usage: network config -p path" << std::endl;
+		std::cerr << "Usage: network config -p[a] path" << std::endl;
 	}
 }

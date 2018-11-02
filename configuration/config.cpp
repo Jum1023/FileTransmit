@@ -25,11 +25,18 @@ void Config::save(const std::string& filename)
 
 std::string Config::getText(const std::string& path)
 {
-	std::string tmp= tree.get<std::string>(path);
 	return tree.get<std::string>(path);
 }
 
-std::string Config::getAttr(const std::string& path)
+std::string Config::getAttr(const std::string& path, const std::string& attr)
 {
+	const ptree& childtree = tree.get_child(path, ptree());
+	for (ptree::const_iterator iter = childtree.begin(); iter != childtree.end();iter++)
+	{
+		if (iter->first == "<xmlattr>")
+		{
+			return iter->second.get<std::string>(attr);
+		}
+	}
 	return std::string();
 }
