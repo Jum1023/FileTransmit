@@ -111,7 +111,7 @@ void Transmit::handleServerRead(const boost::system::error_code& error, std::siz
 
 	}
 
-	fout.open(filename,std::ios::binary||std::ios::trunc);
+	fout.open(filename,std::ios::binary|std::ios::trunc);
 	if (fout)
 	{
 		sendbuf[0] = 0;
