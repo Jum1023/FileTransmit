@@ -9,6 +9,8 @@
 *.exe
 *ilk
 *.pdb
+*.o
+*.so
 
 Debug
 Release
