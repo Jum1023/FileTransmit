@@ -1,5 +1,5 @@
 network : libconfiguration.so libFileTransmit.so libInstantMessage.so ./network/utilities.cpp ./network/main.cpp
-	g++ -o ./bin/network ./network/utilities.cpp ./network/main.cpp -L./bin -lconfiguration -lFileTransmit -lInstantMessage -lboost_filesystem -lboost_system
+	g++ -o ./bin/network ./network/utilities.cpp ./network/main.cpp -L. -L./bin -lconfiguration -lFileTransmit -lInstantMessage -lboost_filesystem -lboost_system
 
 libconfiguration.so : ./configuration/config.cpp ./configuration/config.h
 	g++ -c -fPIC ./configuration/config.cpp  -o ./bin/config.o
