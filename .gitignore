@@ -10,6 +10,7 @@
 *ilk
 *.pdb
 *.o
+*.a
 *.so
 
 Debug
