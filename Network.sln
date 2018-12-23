@@ -11,7 +11,7 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "network", "network\network.
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "configuration", "configuration\configuration.vcxproj", "{CF22B9A1-9013-460F-9BD8-2FFA5BB1BE78}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "MemoryPool", "MemoryPool\MemoryPool.vcxproj", "{515C5E37-E36C-461D-89AD-9C46A83DF3DE}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "DataPool", "DataPool\DataPool.vcxproj", "{515C5E37-E36C-461D-89AD-9C46A83DF3DE}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

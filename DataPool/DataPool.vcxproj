@@ -21,8 +21,9 @@
   <PropertyGroup Label="Globals">
     <ProjectGuid>{515C5E37-E36C-461D-89AD-9C46A83DF3DE}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
-    <RootNamespace>MemoryPool</RootNamespace>
+    <RootNamespace>DataPool</RootNamespace>
     <WindowsTargetPlatformVersion>8.1</WindowsTargetPlatformVersion>
+    <ProjectName>DataPool</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
