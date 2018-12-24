@@ -40,11 +40,6 @@ int Transmit::sendFile(const std::string& path, const std::string& ip, unsigned 
 	return 0;
 }
 
-void Transmit::recvFile()
-{
-	acceptor.async_accept(recvsocket, boost::bind(&Transmit::handleAccept, this, placeholders::error));
-}
-
 void Transmit::handleConnect(const boost::system::error_code& error)
 {
 	if (error)
@@ -55,20 +50,19 @@ void Transmit::handleConnect(const boost::system::error_code& error)
 	ss << filesize << '|' << filename;
 	ss >> sendbuf.data();
 	ss.seekg(0, std::ios::end);
-	async_write(sendsocket, buffer(sendbuf,ss.tellg()), boost::bind(&Transmit::handleClientRead, this, placeholders::error));
+	async_write(sendsocket, buffer(sendbuf, ss.tellg()), boost::bind(&Transmit::handleClientWrite, this, placeholders::error));
 }
 
-void Transmit::handleAccept(const boost::system::error_code& error)
+void Transmit::handleClientWrite(const boost::system::error_code& error)
 {
 	if (error)
 	{
-		recvFile();
 		return;
 	}
-	async_read(recvsocket, buffer(recvbuf), boost::bind(&Transmit::handleServerRead, this, placeholders::error, placeholders::bytes_transferred));
+	async_read(sendsocket, buffer(recvbuf), boost::bind(&Transmit::handleClientRead, this, placeholders::error, placeholders::bytes_transferred));
 }
 
-void Transmit::handleClientRead(const boost::system::error_code& error)
+void Transmit::handleClientRead(const boost::system::error_code & error, std::size_t bytes_transferred)
 {
 	if (error)
 	{
@@ -86,6 +80,45 @@ void Transmit::handleClientRead(const boost::system::error_code& error)
 	default:
 		break;
 	}
+}
+
+void Transmit::send(const boost::system::error_code& error)
+{
+	if (error)
+	{
+		return;
+	}
+	fin.read(sendbuf.data(), 1000);
+	std::streamsize s = fin.gcount();
+	if (s == 0)//send over
+	{
+		sendbuf[0] = 4;
+		async_write(sendsocket, buffer(sendbuf, 1), boost::bind(&Transmit::sendover, this, placeholders::error));
+	}
+	else
+	{
+		async_write(sendsocket, buffer(sendbuf, s), boost::bind(&Transmit::send, this, placeholders::error));
+	}
+}
+
+void Transmit::sendover(const boost::system::error_code & error)
+{
+	fin.close();
+}
+
+void Transmit::recvFile()
+{
+	acceptor.async_accept(recvsocket, boost::bind(&Transmit::handleAccept, this, placeholders::error));
+}
+
+void Transmit::handleAccept(const boost::system::error_code& error)
+{
+	if (error)
+	{
+		recvFile();
+		return;
+	}
+	async_read(recvsocket, buffer(recvbuf), boost::bind(&Transmit::handleServerRead, this, placeholders::error, placeholders::bytes_transferred));
 }
 
 void Transmit::handleServerRead(const boost::system::error_code& error, std::size_t bytes_transferred)
@@ -131,30 +164,6 @@ void Transmit::handleServerWrite(const boost::system::error_code& error)
 		return;
 	}
 	async_read(recvsocket, buffer(recvbuf), boost::bind(&Transmit::recv, this, placeholders::error, placeholders::bytes_transferred));
-}
-
-void Transmit::send(const boost::system::error_code& error)
-{
-	if (error)
-	{
-		return;
-	}
-	fin.read(sendbuf.data(), 1000);
-	std::streamsize s = fin.gcount();
-	if (s == 0)//send over
-	{
-		sendbuf[0] = 4;
-		async_write(sendsocket, buffer(sendbuf, 1), boost::bind(&Transmit::sendover, this, placeholders::error));
-	}
-	else
-	{
-		async_write(sendsocket, buffer(sendbuf, s), boost::bind(&Transmit::send, this, placeholders::error));
-	}
-}
-
-void Transmit::sendover(const boost::system::error_code & error)
-{
-	fin.close();
 }
 
 void Transmit::recv(const boost::system::error_code& error, std::size_t bytes_transferred)

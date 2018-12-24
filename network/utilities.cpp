@@ -73,6 +73,7 @@ void Utils::sendMsg() const
 	map<string,string> p;
 	if (param.empty() || (param.size() & 1) != 0)
 	{
+		std::cerr << "Usage: network sendmsg -c \"hello word\" -h host [-p port]" << std::endl;
 		return;
 	}
 
@@ -116,6 +117,7 @@ void Utils::sendFile() const
 	map<string, string> p;
 	if (param.empty() || (param.size() & 1) == 1)
 	{
+		std::cerr << "Usage: network sendfile -f path -h host [-p port]" << std::endl;
 		return;
 	}
 

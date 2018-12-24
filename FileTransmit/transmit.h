@@ -20,7 +20,7 @@ public:
 	Transmit(io_context& io_context);
 	~Transmit();
 
-	int sendFile(const std::string& path, const std::string& ip, unsigned short port = 8191);
+	int sendFile(const std::string& path, const std::string& ip, unsigned short port = 8192);
 	void recvFile();
 
 	inline double getProgress() { return progress; }
@@ -28,7 +28,8 @@ public:
 private:
 	void handleConnect(const boost::system::error_code& error);
 	void handleAccept(const boost::system::error_code& error);
-	void handleClientRead(const boost::system::error_code& error);
+	void handleClientRead(const boost::system::error_code& error, std::size_t bytes_transferred);
+	void handleClientWrite(const boost::system::error_code& error);
 	void handleServerRead(const boost::system::error_code& error, std::size_t bytes_transferred);
 	void handleServerWrite(const boost::system::error_code& error);
 	void send(const boost::system::error_code& error);
