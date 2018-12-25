@@ -11,11 +11,11 @@ this data pool class was implemented with circlar buffer based on consumer and p
 #define _CONCURRENCYPOOL_H_
 
 #include <boost/thread/mutex.hpp>
-#include <boost/interprocess/sync/named_semaphore.hpp>
+//#include <boost/interprocess/sync/named_semaphore.hpp>
 #include "../macro/export.h"
 
 using namespace boost;
-using namespace boost::interprocess;
+//using namespace boost::interprocess;
 
 class Semaphore;
 
@@ -42,7 +42,7 @@ public:
 private:
 	void push(const char *buffer, int size);
 	void pop(const char *buffer, int size);
-	unsigned int setSize(unsigned int size) const;
+	unsigned int setPoolSize(unsigned int size) const;
 
 private:
 	char* pool;

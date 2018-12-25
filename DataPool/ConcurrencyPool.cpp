@@ -13,7 +13,7 @@ this data pool class was implemented with circlar buffer based on consumer and p
 
 DataPool::DataPool(int size) :usedindex(0), freeindex(0)
 {
-	size = setSize(size);
+	size = setPoolSize(size);
 	pool = new char[size];
 	poolsize = size;
 	if (pool == NULL || size <= 0)
@@ -139,7 +139,7 @@ void DataPool::pop(const char *buffer, int size)
 	freeindex = ((freeindex + size) & (poolsize-1));
 }
 
-unsigned int DataPool::setSize(unsigned int size) const
+unsigned int DataPool::setPoolSize(unsigned int size) const
 {
 	unsigned int tmp = size;
 	tmp |= tmp >> 1;
