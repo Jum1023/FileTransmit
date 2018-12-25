@@ -59,7 +59,7 @@ void Transmit::handleClientWrite(const boost::system::error_code& error)
 	{
 		return;
 	}
-	async_read(sendsocket, buffer(recvbuf), boost::bind(&Transmit::handleClientRead, this, placeholders::error, placeholders::bytes_transferred));
+	sendsocket.async_read_some(buffer(recvbuf), boost::bind(&Transmit::handleClientRead, this, placeholders::error, placeholders::bytes_transferred));
 }
 
 void Transmit::handleClientRead(const boost::system::error_code & error, std::size_t bytes_transferred)
@@ -90,20 +90,10 @@ void Transmit::send(const boost::system::error_code& error)
 	}
 	fin.read(sendbuf.data(), 1000);
 	std::streamsize s = fin.gcount();
-	if (s == 0)//send over
-	{
-		sendbuf[0] = 4;
-		async_write(sendsocket, buffer(sendbuf, 1), boost::bind(&Transmit::sendover, this, placeholders::error));
-	}
-	else
+	if (s != 0)
 	{
 		async_write(sendsocket, buffer(sendbuf, s), boost::bind(&Transmit::send, this, placeholders::error));
 	}
-}
-
-void Transmit::sendover(const boost::system::error_code & error)
-{
-	fin.close();
 }
 
 void Transmit::recvFile()
@@ -118,7 +108,7 @@ void Transmit::handleAccept(const boost::system::error_code& error)
 		recvFile();
 		return;
 	}
-	async_read(recvsocket, buffer(recvbuf), boost::bind(&Transmit::handleServerRead, this, placeholders::error, placeholders::bytes_transferred));
+	recvsocket.async_read_some(buffer(recvbuf), boost::bind(&Transmit::handleServerRead, this, placeholders::error, placeholders::bytes_transferred));
 }
 
 void Transmit::handleServerRead(const boost::system::error_code& error, std::size_t bytes_transferred)
@@ -136,6 +126,7 @@ void Transmit::handleServerRead(const boost::system::error_code& error, std::siz
 		return;
 	}
 	filesize = stoi(strsplit[0]);
+	transferredsize = filesize;
 	filename = strsplit[1];
 
 	//if file exists
@@ -144,7 +135,7 @@ void Transmit::handleServerRead(const boost::system::error_code& error, std::siz
 
 	}
 
-	fout.open(filename,std::ios::binary||std::ios::trunc);
+	fout.open(filename, std::ios::binary | std::ios::trunc);
 	if (fout)
 	{
 		sendbuf[0] = 0;
@@ -163,7 +154,7 @@ void Transmit::handleServerWrite(const boost::system::error_code& error)
 	{
 		return;
 	}
-	async_read(recvsocket, buffer(recvbuf), boost::bind(&Transmit::recv, this, placeholders::error, placeholders::bytes_transferred));
+	recvsocket.async_read_some(buffer(recvbuf), boost::bind(&Transmit::recv, this, placeholders::error, placeholders::bytes_transferred));
 }
 
 void Transmit::recv(const boost::system::error_code& error, std::size_t bytes_transferred)
@@ -172,13 +163,14 @@ void Transmit::recv(const boost::system::error_code& error, std::size_t bytes_tr
 	{
 		return;
 	}
-	if (bytes_transferred == 1 && recvbuf[0] == 4)//transfer finished
+	if (transferredsize != 0)
 	{
-		fout.close();
+		fout.write(recvbuf.data(), bytes_transferred);
+		transferredsize -= bytes_transferred;
+		recvsocket.async_read_some(buffer(recvbuf), boost::bind(&Transmit::recv, this, placeholders::error, placeholders::bytes_transferred));
 	}
 	else
 	{
-		fout.write(recvbuf.data(), bytes_transferred);
-		async_read(recvsocket, buffer(recvbuf), boost::bind(&Transmit::recv, this, placeholders::error, placeholders::bytes_transferred));
+		fout.close();
 	}
 }

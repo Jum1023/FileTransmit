@@ -33,7 +33,6 @@ private:
 	void handleServerRead(const boost::system::error_code& error, std::size_t bytes_transferred);
 	void handleServerWrite(const boost::system::error_code& error);
 	void send(const boost::system::error_code& error);
-	void sendover(const boost::system::error_code& error);
 	void recv(const boost::system::error_code& error,std::size_t bytes_transferred);
 
 private:
@@ -47,6 +46,7 @@ private:
 
 	std::ifstream fin;
 	std::streamsize filesize;
+	std::streamsize transferredsize;
 	std::string filename;
 
 	std::ofstream fout;
