@@ -18,7 +18,7 @@ public:
 	inline void setCommand(const string& cmd) { command = cmd; }
 	inline const string getCommand() const { return command; }
 	inline void setParam(const vector<string>& para) { param = para; }
-	inline const vector<string> getParam() const { return param; }
+	inline const vector<string>& getParam() const { return param; }
 	void addParam(const string& para);
 	void excute() const;
 

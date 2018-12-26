@@ -184,6 +184,6 @@ void Utils::showConfig() const
 	}
 	else
 	{
-		std::cerr << "Usage: network config -p[a] path" << std::endl;
+		std::cerr << "Usage: network config -p path [-a attribute]" << std::endl;
 	}
 }
