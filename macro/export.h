@@ -5,7 +5,7 @@
 #if defined(_WIN32)
 # define SHAREDOBJECT_EXPORT __declspec(dllexport)
 #else
-# define SHAREOBJECT_EXPORT
+# define SHAREDOBJECT_EXPORT
 #endif
 
 #endif
