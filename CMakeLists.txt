@@ -9,7 +9,11 @@ set(Boost_USE_MULTITHREADED ON)
 set(Boost_USE_STATIC_RUNTIME OFF)
 add_definitions(-DBOOST_ERROR_CODE_HEADER_ONLY)
 
-SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -pthread -lboost_system -lboost_filesystem")
+if(APPLE)
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -lboost_system -lboost_filesystem")
+else()
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -lpthread -lboost_system -lboost_filesystem")
+endif()
 
 find_package(Boost)
 IF (Boost_FOUND)
