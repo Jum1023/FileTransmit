@@ -10,7 +10,7 @@ set(Boost_USE_STATIC_RUNTIME OFF)
 add_definitions(-DBOOST_ERROR_CODE_HEADER_ONLY)
 
 if(APPLE)
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -lboost_thread -lboost_system -lboost_filesystem")
+# set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}")
 else()
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -lpthread")
 endif()

@@ -11,4 +11,4 @@ find_package (Boost REQUIRED COMPONENTS system thread filesystem)
 aux_source_directory(. FileTransmit_src)
 add_library(FileTransmit SHARED ${FileTransmit_src})
 
-target_link_libraries(FileTransmit ${Boost})
+target_link_libraries(FileTransmit ${Boost_LIBRARIES})

@@ -11,4 +11,4 @@ find_package (Boost REQUIRED COMPONENTS system thread filesystem)
 aux_source_directory(. InstantMessage_src)
 add_library(InstantMessage SHARED ${InstantMessage_src})
 
-target_link_libraries(InstantMessage ${Boost})
+target_link_libraries(InstantMessage ${Boost_LIBRARIES})
