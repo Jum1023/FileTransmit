@@ -64,5 +64,8 @@ int main()
 	buffer[recv_buffer_size] = '\0';
 	printf("Server : %s\n", buffer);
 
+	//close socket
+	close(sock_fd);
+
 	return 0;
 }

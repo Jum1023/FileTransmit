@@ -72,5 +72,8 @@ int main()
 	int send_buffer_size = sendto(sock_fd, msg, strlen(msg), 0,
 								  (struct sockaddr *)&client_addr, sizeof(client_addr));
 
+	//close socket
+	close(sock_fd);
+
 	return 0;
 }

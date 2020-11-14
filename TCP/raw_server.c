@@ -76,5 +76,8 @@ int main()
 	//send msg to clinet
 	int send_buffer_size = send(client_fd, msg, strlen(msg), 0);
 
+	//close socket
+	close(sock_fd);
+
 	return 0;
 }
