@@ -1,4 +1,6 @@
 .DS_Store
+a.out
+a.out*
 *.sdf
 *.dll
 *.lib
@@ -13,5 +15,6 @@
 *.a
 *.so
 
+.vscode
 Debug
 Release
