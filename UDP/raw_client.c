@@ -43,7 +43,7 @@ int main()
 	int sock_fd = socket(AF_INET, SOCK_DGRAM, 0);
 	if (sock_fd < 0)
 	{
-		printf("socket creation failed");
+		printf("socket creation failed\n");
 		return 0;
 	}
 
@@ -55,7 +55,7 @@ int main()
 
 	//receive msg from server
 	socklen_t server_addr_len = sizeof(struct sockaddr_in);
-	int recv_buffer_size = recvfrom(sock_fd, (char *)buffer, BUFFER_SIZE, 0,
+	int recv_buffer_size = recvfrom(sock_fd, buffer, BUFFER_SIZE, 0,
 									(struct sockaddr *)&server_addr, &server_addr_len);
 	buffer[recv_buffer_size] = '\0';
 	printf("Server : %s\n", buffer);

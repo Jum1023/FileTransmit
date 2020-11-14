@@ -10,12 +10,12 @@
 /*
 linux help manual
 open a terminal then type the following command
-man udp
-man sendto
-man recvfrom
+man tcp
+man send
+man recv
 
 compile command
-gcc -o server raw_server.c
+gcc -o client raw_client.c
 */
 
 #define SERVER_IP "127.0.0.1"
@@ -37,10 +37,10 @@ struct sockaddr_in createServerInfo(const char *ip, int port)
 int main()
 {
 	char buffer[BUFFER_SIZE];
-	char msg[BUFFER_SIZE];
+	char msg[] = "hello server";
 
 	//create socket file descriptor
-	int sock_fd = socket(AF_INET, SOCK_DGRAM, 0);
+	int sock_fd = socket(AF_INET, SOCK_STREAM, 0);
 	if (sock_fd < 0)
 	{
 		printf("socket creation failed\n");
@@ -49,28 +49,20 @@ int main()
 
 	//init server address information
 	struct sockaddr_in server_addr = createServerInfo(SERVER_IP, SERVER_PORT);
-	int res = bind(sock_fd, (struct sockaddr *)&server_addr, sizeof(struct sockaddr_in));
+	int res = connect(sock_fd, (struct sockaddr *)&server_addr, sizeof(struct sockaddr_in));
 	if (res < 0)
 	{
-		printf("bind failed,may be port %d already in use\n", SERVER_PORT);
+		printf("unable to connect to server\n");
 		return 0;
 	}
 
-	//receive msg from client
-	struct sockaddr_in client_addr;
-	socklen_t client_addr_len = sizeof(struct sockaddr_in); //if set to 0,we won't get client_addr
-	int recv_buffer_size = recvfrom(sock_fd, buffer, BUFFER_SIZE, 0,
-									(struct sockaddr *)&client_addr, &client_addr_len);
+	//send msg to server
+	int send_buffer_size = send(sock_fd, msg, strlen(msg), 0);
 
+	//receive msg from server
+	int recv_buffer_size = recv(sock_fd, buffer, BUFFER_SIZE, 0);
 	buffer[recv_buffer_size] = '\0';
-	printf("Client : %s\n", buffer);
-
-	sprintf(msg, "receive msg from client\n IP: %s Port: %d",
-			inet_ntoa(client_addr.sin_addr), htons(client_addr.sin_port));
-	printf("%s\n", msg);
-	//send msg to client
-	int send_buffer_size = sendto(sock_fd, msg, strlen(msg), 0,
-								  (struct sockaddr *)&client_addr, sizeof(client_addr));
+	printf("Server : %s\n", buffer);
 
 	return 0;
 }

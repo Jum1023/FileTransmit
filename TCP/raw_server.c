@@ -10,9 +10,9 @@
 /*
 linux help manual
 open a terminal then type the following command
-man udp
-man sendto
-man recvfrom
+man tcp
+man send
+man recv
 
 compile command
 gcc -o server raw_server.c
@@ -40,7 +40,7 @@ int main()
 	char msg[BUFFER_SIZE];
 
 	//create socket file descriptor
-	int sock_fd = socket(AF_INET, SOCK_DGRAM, 0);
+	int sock_fd = socket(AF_INET, SOCK_STREAM, 0);
 	if (sock_fd < 0)
 	{
 		printf("socket creation failed\n");
@@ -49,28 +49,32 @@ int main()
 
 	//init server address information
 	struct sockaddr_in server_addr = createServerInfo(SERVER_IP, SERVER_PORT);
+	//bind to address
 	int res = bind(sock_fd, (struct sockaddr *)&server_addr, sizeof(struct sockaddr_in));
 	if (res < 0)
 	{
 		printf("bind failed,may be port %d already in use\n", SERVER_PORT);
 		return 0;
 	}
-
-	//receive msg from client
+	//listen
+	res = listen(sock_fd, 1);
+	if (res < 0)
+	{
+		printf("Error while listening\n");
+		return 0;
+	}
+	//accept
 	struct sockaddr_in client_addr;
 	socklen_t client_addr_len = sizeof(struct sockaddr_in); //if set to 0,we won't get client_addr
-	int recv_buffer_size = recvfrom(sock_fd, buffer, BUFFER_SIZE, 0,
-									(struct sockaddr *)&client_addr, &client_addr_len);
-
+	int client_fd = accept(sock_fd, (struct sockaddr *)&client_addr, &client_addr_len);
+	//receive msg from client
+	int recv_buffer_size = recv(client_fd, buffer, BUFFER_SIZE, 0);
 	buffer[recv_buffer_size] = '\0';
-	printf("Client : %s\n", buffer);
-
 	sprintf(msg, "receive msg from client\n IP: %s Port: %d",
 			inet_ntoa(client_addr.sin_addr), htons(client_addr.sin_port));
-	printf("%s\n", msg);
-	//send msg to client
-	int send_buffer_size = sendto(sock_fd, msg, strlen(msg), 0,
-								  (struct sockaddr *)&client_addr, sizeof(client_addr));
+	printf("%s\n%s\n", msg, buffer);
+	//send msg to clinet
+	int send_buffer_size = send(client_fd, msg, strlen(msg), 0);
 
 	return 0;
 }
