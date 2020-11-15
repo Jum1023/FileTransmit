@@ -5,7 +5,7 @@
 #include <string.h>
 #include <sys/socket.h>
 #include <sys/types.h>
-#include <unistd.h>
+#include <unistd.h> //for sleep
 
 /*
 compile command
@@ -15,7 +15,7 @@ gcc -o test test.c
 #define SERVER_IP "127.0.0.1"
 #define SERVER_PORT 8000
 #define BUFFER_SIZE 1024
-#define CLIENT_NUM 1
+#define CLIENT_NUM 10
 
 struct sockaddr_in createServerInfo(const char *ip, int port)
 {
@@ -68,6 +68,9 @@ int main()
 		buffer[recv_buffer_size] = '\0';
 		printf("client %d received server buffer: %s\n", i, buffer);
 	}
+
+	//sleep 2s
+	sleep(2);
 
 	//close socket
 	for (int i = 0; i < CLIENT_NUM; ++i)
