@@ -1,11 +1,75 @@
-createsocket.o : createsocket.h createsocket.cpp
-	gcc -c -o createsocket.o createsocket.cpp
+MAKEFILE      = Makefile
 
-callback.o : callback.h callback.cpp
-	gcc -c -o callback.o callback.cpp
+EQ            = =
 
-reactor.o : reactor.h reactor.cpp
-	gcc -c -o reactor.o reactor.cpp
+####### Compiler, tools and options
 
-reactor : reactor_run.cpp
-	gcc -o reactor reactor_run.cpp createsocket.o callback.o reactor.o
+CC            = gcc
+CXX           = g++
+DEFINES       = -Dlinux
+CFLAGS        = -pipe -g -Wall -W -D_REENTRANT -fPIC $(DEFINES)
+CXXFLAGS      = -pipe -std=c++11 -g -Wall -W -D_REENTRANT -fPIC $(DEFINES)
+INCPATH       = -I.
+QMAKE         = /opt/Qt5.13.0/5.13.0/gcc_64/bin/qmake
+DEL_FILE      = rm -f
+CHK_DIR_EXISTS= test -d
+MKDIR         = mkdir -p
+COPY          = cp -f
+COPY_FILE     = cp -f
+COPY_DIR      = cp -f -R
+INSTALL_FILE  = install -m 644 -p
+INSTALL_PROGRAM = install -m 755 -p
+INSTALL_DIR   = cp -f -R
+DEL_FILE      = rm -f
+SYMLINK       = ln -f -s
+DEL_DIR       = rmdir
+MOVE          = mv -f
+TAR           = tar -cf
+COMPRESS      = gzip -9f
+LINK          = gcc
+LFLAGS        = -Wl,--no-undefined -Wl,-rpath,'$$ORIGIN'
+LIBS          = $(SUBLIBS) -L. -lpthread
+AR            = ar cqs
+RANLIB        =
+SED           = sed
+STRIP         = strip
+
+####### Output directory
+
+OBJECTS_DIR   = .
+
+####### Files
+
+SOURCES       = reactor_run.c \
+				reactor.c \
+				createsocket.c \
+				callback.c \
+
+OBJECTS       = reactor_run.o \
+				reactor.o \
+				createsocket.o \
+				callback.o \
+
+HEADERS       = reactor_run.h \
+				reactor.h \
+				createsocket.h \
+				callback.h \
+
+TARGET        = reactor
+
+####### Build rules
+
+reactor:  $(OBJECTS)
+	$(LINK) $(LFLAGS) -o $(TARGET) $(OBJECTS)
+
+reactor_run.o: reactor_run.c
+	$(CC) -c $(CFLAGS) $(INCPATH) -o reactor_run.o reactor_run.c
+
+reactor.o: reactor.c
+	$(CC) -c $(CFLAGS) $(INCPATH) -o reactor.o reactor.c
+
+createsocket.o: createsocket.c
+	$(CC) -c $(CFLAGS) $(INCPATH) -o createsocket.o createsocket.c
+
+callback.o: callback.c
+	$(CC) -c $(CFLAGS) $(INCPATH) -o callback.o callback.c

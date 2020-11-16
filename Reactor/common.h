@@ -15,7 +15,7 @@
 #include <sys/types.h>
 #include <unistd.h>
 
-#ifdef linux
+#ifdef __linux
 #include <sys/epoll.h>
 #endif
 

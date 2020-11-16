@@ -18,7 +18,7 @@ int io_event_del(int epfd, int events, io_event *ev)
 	if (ev->status != 1) //not exist in epoll
 		return 0;
 	struct epoll_event ep_ev = {0};
-	ep_ev.data.pre = ev;
+	ep_ev.data.ptr = ev;
 	ev->status = 0;
 
 	epoll_ctl(epfd, EPOLL_CTL_DEL, ev->fd, &ep_ev);
