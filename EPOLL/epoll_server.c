@@ -72,11 +72,11 @@ int main()
 		return 0;
 	}
 
-	int epoll_fd = epoll_create(1);  // greater than 0 for backward capability
+	int epoll_fd = epoll_create(1); // greater than 0 for backward capability
 	struct epoll_event ev, events[EPOLL_SIZE] = {0};
 
 	ev.events = EPOLLIN;
-	ev.data.fd = sock_fd;  //add server sock_fd to epoll
+	ev.data.fd = sock_fd; //add server sock_fd to epoll
 	epoll_ctl(epoll_fd, EPOLL_CTL_ADD, sock_fd, &ev);
 
 	while (1)
@@ -90,23 +90,23 @@ int main()
 
 		for (int i = 0; i < nready; ++i)
 		{
-			if (events[i].data.fd == sock_fd)  //server sock_fd ready
+			if (events[i].data.fd == sock_fd) //server sock_fd ready
 			{
 				// accept
 				struct sockaddr_in client_addr;
-				socklen_t client_addr_len = sizeof(struct sockaddr_in);  //if set to 0,we won't get client_addr
+				socklen_t client_addr_len = sizeof(struct sockaddr_in); //if set to 0,we won't get client_addr
 				int client_fd = accept(sock_fd, (struct sockaddr *)&client_addr, &client_addr_len);
 
 				ev.events = EPOLLIN | EPOLLET;
 				ev.data.fd = client_fd;
 				epoll_ctl(epoll_fd, EPOLL_CTL_ADD, client_fd, &ev);
 			}
-			else  //client fd
+			else //client fd
 			{
 				int fd = events[i].data.fd;
 				//receive msg from client
 				int recv_buffer_size = recv(fd, buffer, BUFFER_SIZE, 0);
-				if (recv_buffer_size < 0)  //no data
+				if (recv_buffer_size < 0) //no data
 				{
 					if (errno == EAGAIN || errno == EWOULDBLOCK)
 						printf("already read in other thread\n");
@@ -122,7 +122,7 @@ int main()
 					epoll_ctl(epoll_fd, EPOLL_CTL_DEL, fd, &ev);
 					close(fd);
 				}
-				else  //ready read data
+				else //ready read data
 				{
 					buffer[recv_buffer_size] = '\0';
 					printf("client msg: %s\n", buffer);

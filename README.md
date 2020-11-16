@@ -6,7 +6,19 @@
 ### protocol
 1. TCP
 
-Linux UDP server and client demo
+* Linux TCP server and client demo
+
+* linux查看socket连接
+
+```shell
+netstat -tp
+```
+
+* mac查看socket连接
+
+```shell
+lsof -p PID | grep TCP
+```
 
 2. UDP
 
@@ -16,4 +28,9 @@ Linux UDP server and client demo
 
 ### epoll
 
-百万并发
+1. 百万并发
+
+linux百万并发，要修改单个线程可以打开的文件数
+```shell
+ulimit -n 1000000
+```
