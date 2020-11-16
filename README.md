@@ -34,3 +34,7 @@ linux百万并发，要修改单个线程可以打开的文件数
 ```shell
 ulimit -n 1000000
 ```
+
+### reactor & proactor
+
+两种高效的IO事件处理模型
