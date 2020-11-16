@@ -1,3 +1,6 @@
+#ifndef _COMMON_H_
+#define _COMMON_H_
+
 //all frequently use headers
 #include <arpa/inet.h>
 #include <errno.h>
@@ -18,3 +21,5 @@
 
 #define max(a, b) (((a) > (b)) ? (a) : (b))
 #define min(a, b) (((a) < (b)) ? (a) : (b))
+
+#endif
