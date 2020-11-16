@@ -19,6 +19,7 @@ typedef struct io_event
 	char buffer[BUFFER_SIZE];
 	int bufferMsgSize; //received msg length
 	int status;		   //1 exist in epoll 0 not exist
+	long last_active;  //remove dummzy connection
 } io_event;
 
 typedef struct Reactor
@@ -32,7 +33,7 @@ typedef struct Reactor
 //add event
 extern int io_event_add(int epfd, int events, io_event *ev);
 //del event
-extern int io_event_del(int epfd, int events, io_event *ev);
+extern int io_event_del(int epfd, io_event *ev);
 //set new events to fd
 extern int io_event_set(io_event *ev, int fd, io_events_callback callback, void *arg);
 /*****end of epoll operation*****/

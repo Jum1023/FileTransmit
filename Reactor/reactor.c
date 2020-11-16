@@ -13,7 +13,7 @@ int io_event_add(int epfd, int events, io_event *ev)
 	return 0;
 }
 
-int io_event_del(int epfd, int events, io_event *ev)
+int io_event_del(int epfd, io_event *ev)
 {
 	if (ev->status != 1) //not exist in epoll
 		return 0;
@@ -30,7 +30,6 @@ int io_event_set(io_event *ev, int fd, io_events_callback callback, void *arg)
 {
 	if (ev == NULL)
 		return -1;
-	memset(ev, 0, sizeof(io_event));
 	ev->fd = fd;
 	ev->callback = callback;
 	ev->arg = arg;
@@ -52,6 +51,7 @@ int reactor_init(Reactor *reactor)
 		close(reactor->epfd);
 		return -1;
 	}
+	memset(reactor->events, 0, MAX_EPOLL_EVENTS * sizeof(io_event));
 	return 0;
 }
 
