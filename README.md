@@ -91,13 +91,51 @@ CLOSED			|					|
 */
 ```
 
+1. TIME-WAIT
+
+当最后一个ack丢失时，remote端启动定时重传fin,如果没有TIME-WAIT,会一直发出无效包
+
+默认值120s，在linux下设置方式
+```shell
+/etc/sysctl.conf
+# 表示开启SYN Cookies。当出现SYN等待队列溢出时，启用Cookie来处理，可防范少量的SYN攻击。该参数默认为0，表示关闭
+net.ipv4.tcp_syncookies＝1
+# 表示开启重用，即允许将TIME-WAIT套接字重新用于新的TCP连接。该参数默认为0，表示关闭
+net.ipv4.tcp_tw_reuse＝1
+# 表示开启TCP连接中TIME-WAIT套接字的快速回收，该参数默认为0，表示关闭
+net.ipv4.tcp_tw_recycle＝1
+# 表示如果套接字由本端要求关闭，那么这个参数将决定它保持在FIN-WAIT-2状态的时间
+net.ipv4.tcp_fin_timeout＝30
+# 表示当Keepalived启用时，TCP发送Keepalived消息的频度改为20分钟，默认值是2小时
+net.ipv4.tcp_keepalive_time＝1200
+# 表示系统同时保持TIME_WAIT套接字的最大数量，如果超过这个数字，TIME_WAIT套接字将立刻被清除并打印警告信息，默认值为180 000，此处改为5000。对于Apache、Nginx等服务器，前面介绍的几个参数已经可以很好地减少TIME_WAIT套接字的数量，但是对于Squid来说，效果却不大，有了此参数就可以控制TIME_WAIT套接字的最大数量，避免Squid服务器被大量的TIME_WAIT套接字拖死
+net.ipv4.tcp_max_tw_buckets＝5000
+
+sysctl -p /etc/sysctl.conf
+```
+
 #### 常见名词
-* 超时重传
 * 慢启动
+
+门限值以下是慢启动，以上是拥塞控制
+
 * 拥塞控制
-* 滑动窗口
+
+rtt(round trip time) rtt = 0.9*pre_rtt + cur_rtt
+rtt增大window减小，rtt减小window增大
+
+* 滑动窗口 [ack,ack+window]
+* 超时重传
+* 延迟确认
+* 半连接/全连接(syn队列/accept队列)
+* 全双工/半双工
 * 三次握手
 * 四次挥手
+
+#### TCP vs UDP
+
+1. UDP实时性高于TCP
+2. UDP传输效率高于TCP
 
 ### epoll
 
