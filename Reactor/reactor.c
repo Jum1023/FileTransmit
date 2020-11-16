@@ -7,7 +7,7 @@ int io_event_add(int epfd, int events, io_event *ev)
 	ep_ev.data.ptr = ev;
 	ep_ev.events = ev->events = events;
 
-	int op = ev->status == 1 ? EPOLL_CTL_ADD : EPOLL_CTL_MOD;
+	int op = (ev->status == 0 ? EPOLL_CTL_ADD : EPOLL_CTL_MOD);
 	ev->status = 1;
 	epoll_ctl(epfd, op, ev->fd, &ep_ev);
 	return 0;
@@ -28,6 +28,9 @@ int io_event_del(int epfd, int events, io_event *ev)
 //set new events to fd
 int io_event_set(io_event *ev, int fd, io_events_callback callback, void *arg)
 {
+	if (ev == NULL)
+		return -1;
+	memset(ev, 0, sizeof(io_event));
 	ev->fd = fd;
 	ev->callback = callback;
 	ev->arg = arg;

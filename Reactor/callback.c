@@ -14,6 +14,7 @@ int send_callback(int fd, int events, void *arg)
 		printf("%s\n", ev->buffer);
 		io_event_add(reactor->epfd, EPOLLIN, ev);
 	}
+	return 0;
 }
 
 int recv_callback(int fd, int events, void *arg)
@@ -45,6 +46,7 @@ int recv_callback(int fd, int events, void *arg)
 			io_event_del(reactor->epfd, EPOLLIN, ev);
 		}
 	}
+	return 0;
 }
 
 int accept_callback(int fd, int events, void *arg)
@@ -59,4 +61,5 @@ int accept_callback(int fd, int events, void *arg)
 	fcntl(client_fd, F_SETFL, O_NONBLOCK);
 	io_event_set(&reactor->events[client_fd], client_fd, recv_callback, reactor);
 	io_event_add(reactor->epfd, EPOLLIN, &reactor->events[client_fd]);
+	return 0;
 }
