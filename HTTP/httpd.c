@@ -11,9 +11,9 @@
 #include <sys/types.h>
 #include <unistd.h>
 
-#define CONNMAX 1000
+#define MAX_CONNECTIONS 1000
 
-static int listenfd, clients[CONNMAX];
+static int listenfd, clients[MAX_CONNECTIONS];
 static void error(char *);
 static void startServer(const char *);
 static void respond(int);
@@ -42,9 +42,8 @@ void serve_forever(const char *PORT)
 		"\033[92m", PORT, "\033[0m");
 
 	// Setting all elements to -1: signifies there is no client connected
-	int i;
-	for (i = 0; i < CONNMAX; i++)
-		clients[i] = -1;
+	memset(clients, -1, sizeof(clients));
+
 	startServer(PORT);
 
 	// Ignore SIGCHLD to avoid zombie threads
@@ -71,7 +70,7 @@ void serve_forever(const char *PORT)
 
 		// find next empty slot
 		while (clients[slot] != -1)
-			slot = (slot + 1) % CONNMAX;
+			slot = (slot + 1) % MAX_CONNECTIONS;
 	}
 }
 
@@ -120,12 +119,10 @@ void startServer(const char *port)
 // get request header
 char *request_header(const char *name)
 {
-	header_t *h = reqhdr;
-	while (h->name)
+	for (header_t *h = reqhdr; h->name; ++h)
 	{
 		if (strcmp(h->name, name) == 0)
 			return h->value;
-		h++;
 	}
 	return NULL;
 }
@@ -164,7 +161,7 @@ void respond(int n)
 
 		header_t *h = reqhdr;
 		char *t, *t2;
-		while (h < reqhdr + 16)
+		for (; h < reqhdr + 16; ++h)
 		{
 			char *k, *v, *t;
 			k = strtok(NULL, "\r\n: \t");
@@ -172,16 +169,15 @@ void respond(int n)
 				break;
 			v = strtok(NULL, "\r\n");
 			while (*v && *v == ' ')
-				v++;
+				++v;
 			h->name = k;
 			h->value = v;
-			h++;
 			fprintf(stderr, "[H] %s: %s\n", k, v);
 			t = v + 1 + strlen(v);
 			if (t[1] == '\r' && t[2] == '\n')
 				break;
 		}
-		t++;								   // now the *t shall be the beginning of user payload
+		++t;								   // now the *t shall be the beginning of user payload
 		t2 = request_header("Content-Length"); // and the related header if there is
 		payload = t;
 		payload_size = t2 ? atol(t2) : (rcvd - (t - buf));
