@@ -1,6 +1,5 @@
 #include "common.h"
 
-#define SERVER_IP "127.0.0.1"
 #define HTTP_SERVER_PORT 80
 #define BUFFER_SIZE 1024
 
@@ -12,11 +11,11 @@
 int http_create_socket(const char *ip)
 {
 	int sock_fd = socket(AF_INET, SOCK_STREAM, 0);
-	struct sockaddr_in sin = {0};
-	sin.sin_family = AF_INET;
-	sin.sin_port = htons(HTTP_SERVER_PORT);
-	sin.sin_addr.s_addr = inet_addr(ip);
-	if (connect(sock_fd, (struct sockaddr *)&sin, sizeof(struct sockaddr_in)) < 0)
+	struct sockaddr_in server_addr = {0};
+	server_addr.sin_family = AF_INET;
+	server_addr.sin_port = htons(HTTP_SERVER_PORT);
+	server_addr.sin_addr.s_addr = inet_addr(ip);
+	if (connect(sock_fd, (struct sockaddr *)&server_addr, sizeof(struct sockaddr_in)) < 0)
 	{
 		close(sock_fd);
 		printf("can not connect to server\n");
