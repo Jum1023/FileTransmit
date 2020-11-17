@@ -177,3 +177,15 @@ net.netfilter.nf_conntrack_tcp_timeout_established = 1200
 
 sysctl -p #生效
 ```
+
+### 单机服务器IO模型
+1. 单线程同步 NTP
+2. 多线程同步 Natty
+3. 纯异步 redis,HAProxy
+4. 半同步半异步 Natty
+5. 多进程同步 fastcgi
+6. 多线程异步 memcached
+7. 多进程异步 nginx
+8. 每请求每进程(线程) Apache/CGI
+9. 微进程架构 erlang/go/lua
+10. 协程架构 libco/ntyco
