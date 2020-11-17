@@ -139,13 +139,41 @@ rtt增大window减小，rtt减小window增大
 
 ### epoll
 
-1. 百万并发
-
-linux百万并发，要修改单个线程可以打开的文件数
-```shell
-ulimit -n 1000000
-```
-
 ### reactor & proactor
 
 两种高效的IO事件处理模型
+
+### 单台服务器百万并发
+
+1. server系统限制
+* 单个进程最多打开的文件数
+```shell
+ulimit -a # 查看全部
+ulimit -n # 关注open files
+
+vim /etc/security/limits.conf
+修改fs.file_max
+```
+* 单个进程的maxfd
+```shell
+sysctl -a | grep file_max
+# 修改文件
+/etc/sysctl.conf
+net.ipv4.tcp_men = 262144 524288 786432
+net.ipv4.tcp_wmen = 1024 1024 2048
+net.ipv4.tcp_rmen = 1024 1024 2048
+fs.file_max =1048576 #max fd
+
+sysctl -p #生效
+```
+2. 单个客户端最多连接数限制
+
+server端开发不用关注，单台客户端机器测试用
+```shell
+# 修改文件
+/etc/sysctl.conf
+net.nf_conntrack_max = 1048576
+net.netfilter.nf_conntrack_tcp_timeout_established = 1200
+
+sysctl -p #生效
+```
