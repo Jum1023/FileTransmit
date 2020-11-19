@@ -16,11 +16,20 @@ compile command
 gcc -o server udp_send_file.c
 */
 
+#pragma pack(1)
+typedef struct Data
+{
+	int sequenceId; // -1 file not exist
+	char data[0];
+} Data;
+#pragma pack(0)
+
 #define SERVER_IP "127.0.0.1"
 #define SERVER_PORT 8000
 #define BUFFER_SIZE 1024
 
-struct sockaddr_in createServerInfo(const char *ip, int port)
+struct sockaddr_in
+createServerInfo(const char *ip, int port)
 {
 	struct sockaddr_in server_addr;
 	memset(&server_addr, 0, sizeof(server_addr));
@@ -30,6 +39,60 @@ struct sockaddr_in createServerInfo(const char *ip, int port)
 	server_addr.sin_addr.s_addr = INADDR_ANY;
 	// server_addr.sin_addr.s_addr = inet_addr(ip);
 	return server_addr;
+}
+
+/*
+模拟三次握手确认机制
+由发送端确认，并超时重传请求
+接收端在接收到确认ack后再执行下一步
+
+sender             reciever
+		   data
+发送数据 =========>
+			ack     接收数据返回ack
+收到ack	<=========
+			ack
+返回ack	=========>  收到ack执行下一步
+
+1. 发送端data丢失，发送端重传
+2. 接收端ack丢失，发送端重传
+3. 发送端ack丢失，发送端重传
+*/
+int send_and_wait_for_ack(int socket, const void *buffer, size_t length, int flags,
+						  const struct sockaddr *dest_addr, socklen_t dest_len)
+{
+	char recv_buff[BUFFER_SIZE] = {0};
+	char msg[] = "ack";
+
+	struct timeval tv = {0};
+	tv.tv_sec = 5; //5s
+	setsockopt(socket, SOL_SOCKET, SO_RCVTIMEO, (const char *)&tv, sizeof(tv));
+
+	while (1)
+	{
+		sendto(socket, buffer, length, flags, dest_addr, dest_len); //data
+		int nbyte = recvfrom(socket, recv_buff, length, flags, dest_addr, dest_len);
+		if (nbyte < 0)
+			continue;
+		recv_buff[nbyte] = '\0';
+		if (nbyte > 0 && strcmp(msg, recv_buff) == 0)
+		{
+			sendto(socket, msg, strlen(msg), flags, dest_addr, dest_len);
+			break;
+		}
+	}
+	return 0;
+}
+
+int getFileSize(FILE *fp)
+{
+	fpos_t pos = 0;
+	fgetpos(fp, &pos);
+	fseek(fp, 0L, SEEK_END);
+	int filesize = ftell(fp);
+	// rewind(fp); //seeking to the beginning
+	fsetpos(fp, &pos);
+	return filesize;
 }
 
 int main()
@@ -60,32 +123,48 @@ int main()
 	int recv_buffer_size = recvfrom(sock_fd, buffer, BUFFER_SIZE, 0,
 									(struct sockaddr *)&client_addr, &client_addr_len);
 
-	buffer[recv_buffer_size] = '\0';//recieve the first buff as file name
-	printf("Client IP %s port %d: %s\n", inet_ntoa(client_addr.sin_addr), htons(client_addr.sin_port),buffer);
+	buffer[recv_buffer_size] = '\0'; //recieve the first buff as file name
+	printf("Client IP %s port %d: %s\n", inet_ntoa(client_addr.sin_addr), htons(client_addr.sin_port), buffer);
 
-	FILE* f=fopen(buffer,"rb");
-	if(!f)
+	FILE *fp = fopen(buffer, "rb");
+	if (!fp)
 	{
 		printf("file not exist\n");
+		Data data = {-1};
+		data.sequenceId = htonl(data.sequenceId);
+		sendto(sock_fd, (void *)&data, sizeof(Data), 0,
+			   (struct sockaddr *)&client_addr, sizeof(client_addr));
 		return 0;
 	}
+	int filesize = getFileSize(fp);
+	Data *data = (Data *)buffer;
+	data->sequenceId = filesize;
+	data->sequenceId = htonl(data->sequenceId);
+	sendto(sock_fd, data, sizeof(Data), 0,
+		   (struct sockaddr *)&client_addr, sizeof(client_addr));
+
 	//send file to client
-	int nbytes = fread(buffer,sizeof(char),1000,f);
-	while(nbytes!=0)
+	int nbytes = fread(data->data, sizeof(char), 1000, fp);
+	for (int count = 0; nbytes != 0; ++count)
 	{
-		int send_buffer_size = sendto(sock_fd, buffer, nbytes, 0,
-										(struct sockaddr *)&client_addr, sizeof(client_addr));
-		printf("%d\n",send_buffer_size);
-		nbytes = fread(buffer,sizeof(char),1000,f);
+		//filling the sequence id
+		data->sequenceId = count;
+		data->sequenceId = htonl(data->sequenceId);
+		memcpy(buffer, &data, sizeof(Data));
+
+		int send_buffer_size = sendto(sock_fd, buffer, nbytes + sizeof(Data), 0,
+									  (struct sockaddr *)&client_addr, sizeof(client_addr));
+		nbytes = fread(data->data, sizeof(char), 1000, fp);
 	}
-	sendto(sock_fd, buffer, 0, 0,
-						(struct sockaddr *)&client_addr, sizeof(client_addr));
-	printf("file send over\n");
+	sprintf(msg, "file send over");
+	sendto(sock_fd, msg, strlen(msg), 0,
+		   (struct sockaddr *)&client_addr, sizeof(client_addr));
+	printf("%s\n", msg);
 
 	//close socket
 	close(sock_fd);
 	//close file
-	fclose(f);
+	fclose(fp);
 
 	return 0;
 }

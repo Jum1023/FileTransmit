@@ -16,6 +16,14 @@ compile command
 gcc -o server udp_recv_file.c
 */
 
+#pragma pack(1)
+typedef struct Data
+{
+	int sequenceId; // -1 file not exist
+	char data[0];
+} Data;
+#pragma pack(0)
+
 #define SERVER_IP "149.28.230.65"
 // #define SERVER_IP "127.0.0.1"
 #define SERVER_PORT 8000
@@ -33,9 +41,52 @@ struct sockaddr_in createServerInfo(const char *ip, int port)
 	return server_addr;
 }
 
+/*
+模拟三次握手确认机制
+由发送端确认，并超时重传请求
+接收端在接收到确认ack后再执行下一步
+
+sender             reciever
+		   data
+发送数据 =========>
+			ack     接收数据返回ack
+收到ack	<=========
+			ack
+返回ack	=========>  收到ack执行下一步
+
+1. 发送端data丢失，发送端重传
+2. 接收端ack丢失，发送端重传
+3. 发送端ack丢失，发送端重传
+*/
+int send_and_wait_for_ack(int socket, const void *buffer, size_t length, int flags,
+						  const struct sockaddr *dest_addr, socklen_t dest_len)
+{
+	char recv_buff[BUFFER_SIZE] = {0};
+	char msg[] = "ack";
+
+	struct timeval tv = {0};
+	tv.tv_sec = 5; //5s
+	setsockopt(socket, SOL_SOCKET, SO_RCVTIMEO, (const char *)&tv, sizeof(tv));
+
+	while (1)
+	{
+		sendto(socket, buffer, length, flags, dest_addr, dest_len); //data
+		int nbyte = recvfrom(socket, recv_buff, length, flags, dest_addr, dest_len);
+		if (nbyte < 0)
+			continue;
+		recv_buff[nbyte] = '\0';
+		if (nbyte > 0 && strcmp(msg, recv_buff) == 0)
+		{
+			sendto(socket, msg, strlen(msg), flags, dest_addr, dest_len);
+			break;
+		}
+	}
+	return 0;
+}
+
 int main()
 {
-	char buffer[BUFFER_SIZE];
+	char buffer[BUFFER_SIZE] = {0};
 	char filename[] = "cpptools-osx.vsix";
 
 	//create socket file descriptor
@@ -43,12 +94,6 @@ int main()
 	if (sock_fd < 0)
 	{
 		printf("socket creation failed\n");
-		return 0;
-	}
-	FILE* f=fopen(filename,"wb");
-	if(!f)
-	{
-		printf("file not exist\n");
 		return 0;
 	}
 
@@ -62,11 +107,29 @@ int main()
 	socklen_t server_addr_len = sizeof(struct sockaddr_in);
 	int recv_buffer_size = recvfrom(sock_fd, buffer, BUFFER_SIZE, 0,
 									(struct sockaddr *)&server_addr, &server_addr_len);
-	while(recv_buffer_size!=0)
+	//ack
+	sendto(sock_fd, "ack", strlen("ack"), 0,
+		   (struct sockaddr *)&server_addr, sizeof(server_addr));
+	buffer[recv_buffer_size] = '\0';
+	Data *data = (Data *)buffer;
+	data->sequenceId = ntohl(data->sequenceId);
+
+	FILE *fp = fopen(filename, "rb+"); //特定位置以覆盖的方式更改文件(不是追加)
+	if (!fp)
+	{
+		printf("open file failed\n");
+		return 0;
+	}
+
+	//recieve file begin
+	recv_buffer_size = recvfrom(sock_fd, buffer, BUFFER_SIZE, 0,
+								(struct sockaddr *)&server_addr, &server_addr_len);
+	while (recv_buffer_size != 0)
 	{
 		buffer[recv_buffer_size] = '\0';
-		printf("%d\n",recv_buffer_size);
-		fwrite(buffer,sizeof(char),recv_buffer_size,f);
+		rewind(fp);
+		fseek(fp, data->sequenceId * 1000, SEEK_SET);
+		fwrite(buffer, sizeof(char), recv_buffer_size, fp);
 		recv_buffer_size = recvfrom(sock_fd, buffer, BUFFER_SIZE, 0,
 									(struct sockaddr *)&server_addr, &server_addr_len);
 	}
@@ -75,7 +138,7 @@ int main()
 
 	//close socket
 	close(sock_fd);
-	fclose(f);
+	fclose(fp);
 
 	return 0;
 }
