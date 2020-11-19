@@ -1,9 +1,11 @@
 #include <arpa/inet.h>
+#include <fcntl.h>
 #include <netinet/in.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <sys/socket.h>
+#include <sys/time.h>
 #include <sys/types.h>
 #include <unistd.h>
 
@@ -24,8 +26,8 @@ typedef struct Data
 } Data;
 #pragma pack(0)
 
-#define SERVER_IP "149.28.230.65"
-// #define SERVER_IP "127.0.0.1"
+// #define SERVER_IP "149.28.230.65"
+#define SERVER_IP "192.168.10.156"
 #define SERVER_PORT 8000
 #define BUFFER_SIZE 1024
 
@@ -68,10 +70,15 @@ int send_and_wait_for_ack(int socket, const void *buffer, size_t length, int fla
 	tv.tv_sec = 5; //5s
 	setsockopt(socket, SOL_SOCKET, SO_RCVTIMEO, (const char *)&tv, sizeof(tv));
 
+	//receive msg from client
+	struct sockaddr_in client_addr;
+	socklen_t client_addr_len = sizeof(struct sockaddr_in); //if set to 0,we won't get client_addr
+
 	while (1)
 	{
 		sendto(socket, buffer, length, flags, dest_addr, dest_len); //data
-		int nbyte = recvfrom(socket, recv_buff, length, flags, dest_addr, dest_len);
+		int nbyte = recvfrom(socket, recv_buff, length, flags,
+							 (struct sockaddr *)&client_addr, &client_addr_len);
 		if (nbyte < 0)
 			continue;
 		recv_buff[nbyte] = '\0';
@@ -81,6 +88,14 @@ int send_and_wait_for_ack(int socket, const void *buffer, size_t length, int fla
 			break;
 		}
 	}
+	return 0;
+}
+
+int allocateFile(const char *filename, unsigned int filesize)
+{
+	int fd = creat(filename, 0644);
+	ftruncate(fd, sizeof(char) * filesize);
+	close(fd);
 	return 0;
 }
 
@@ -113,8 +128,14 @@ int main()
 	buffer[recv_buffer_size] = '\0';
 	Data *data = (Data *)buffer;
 	data->sequenceId = ntohl(data->sequenceId);
+	if (data->sequenceId < 0)
+	{
+		printf("file not exist\n");
+		return 0;
+	}
 
-	FILE *fp = fopen(filename, "rb+"); //特定位置以覆盖的方式更改文件(不是追加)
+	allocateFile(filename, data->sequenceId); //先为文件开辟磁盘空间
+	FILE *fp = fopen(filename, "rb+");		  //特定位置以覆盖的方式更改文件(不是追加)
 	if (!fp)
 	{
 		printf("open file failed\n");
@@ -127,14 +148,17 @@ int main()
 	while (recv_buffer_size != 0)
 	{
 		buffer[recv_buffer_size] = '\0';
+		data->sequenceId = ntohl(data->sequenceId);
+		if (data->sequenceId < 0)
+			break;
 		rewind(fp);
 		fseek(fp, data->sequenceId * 1000, SEEK_SET);
-		fwrite(buffer, sizeof(char), recv_buffer_size, fp);
+		fwrite(data->data, sizeof(char), recv_buffer_size - sizeof(Data), fp);
 		recv_buffer_size = recvfrom(sock_fd, buffer, BUFFER_SIZE, 0,
 									(struct sockaddr *)&server_addr, &server_addr_len);
 	}
 
-	printf("file recv over");
+	printf("file recv over\n");
 
 	//close socket
 	close(sock_fd);

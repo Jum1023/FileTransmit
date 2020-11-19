@@ -4,6 +4,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <sys/socket.h>
+#include <sys/time.h>
 #include <sys/types.h>
 #include <unistd.h>
 
@@ -86,7 +87,7 @@ int send_and_wait_for_ack(int socket, const void *buffer, size_t length, int fla
 
 int getFileSize(FILE *fp)
 {
-	fpos_t pos = 0;
+	fpos_t pos = {0};
 	fgetpos(fp, &pos);
 	fseek(fp, 0L, SEEK_END);
 	int filesize = ftell(fp);
