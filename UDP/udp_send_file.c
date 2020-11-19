@@ -69,10 +69,14 @@ int send_and_wait_for_ack(int socket, const void *buffer, size_t length, int fla
 	tv.tv_sec = 5; //5s
 	setsockopt(socket, SOL_SOCKET, SO_RCVTIMEO, (const char *)&tv, sizeof(tv));
 
+	struct sockaddr_in client_addr;
+	socklen_t client_addr_len = sizeof(struct sockaddr_in); //if set to 0,we won't get client_addr
+
 	while (1)
 	{
 		sendto(socket, buffer, length, flags, dest_addr, dest_len); //data
-		int nbyte = recvfrom(socket, recv_buff, length, flags, dest_addr, dest_len);
+		int nbyte = recvfrom(socket, recv_buff, length, flags,
+							 (struct sockaddr *)&client_addr, &client_addr_len);
 		if (nbyte < 0)
 			continue;
 		recv_buff[nbyte] = '\0';
@@ -151,12 +155,17 @@ int main()
 		//filling the sequence id
 		data->sequenceId = count;
 		data->sequenceId = htonl(data->sequenceId);
-		memcpy(buffer, &data, sizeof(Data));
 
 		int send_buffer_size = sendto(sock_fd, buffer, nbytes + sizeof(Data), 0,
 									  (struct sockaddr *)&client_addr, sizeof(client_addr));
 		nbytes = fread(data->data, sizeof(char), 1000, fp);
 	}
+
+	data->sequenceId = -1;
+	data->sequenceId = htonl(data->sequenceId);
+	sendto(sock_fd, data, sizeof(Data), 0,
+		   (struct sockaddr *)&client_addr, sizeof(client_addr));
+
 	sprintf(msg, "file send over");
 	sendto(sock_fd, msg, strlen(msg), 0,
 		   (struct sockaddr *)&client_addr, sizeof(client_addr));
