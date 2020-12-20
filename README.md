@@ -116,6 +116,25 @@ net.ipv4.tcp_max_tw_buckets＝5000
 sysctl -p /etc/sysctl.conf
 ```
 
+2. FIN-WAIT-1
+
+client先异常断开没有发送FIN,server主动关闭进入FIN-WAIT-1 \
+无法收到FIN,会一直处于该状态,该状态系统有time_out,尚未查证具体时间
+```shell
+# record what tcp_max_orphans's current value
+original_value=$(cat /proc/sys/net/ipv4/tcp_max_orphans)
+
+#set the tcp_max_orphans to 0 temporarily
+echo 0 > /proc/sys/net/ipv4/tcp_max_orphans
+
+# watch /var/log/messages
+# it will split out "kernel: TCP: too many of orphaned sockets"
+# it won't take long for the connections to be killed
+
+# restore the value of tcp_max_orphans whatever it was before.
+echo $original_value > /proc/sys/net/ipv4/tcp_max_orphans
+```
+
 #### 常见名词
 * 慢启动
 

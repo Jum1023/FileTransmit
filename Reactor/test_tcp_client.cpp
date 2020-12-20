@@ -12,8 +12,8 @@ compile command
 gcc -o test test_tcp_client.c
 */
 
-#define SERVER_IP "192.168.10.155"
-#define SERVER_PORT 8000
+#define SERVER_IP "81.69.226.177"
+#define SERVER_PORT 16384
 #define BUFFER_SIZE 1024
 #define CLIENT_NUM (1024 * 1024)
 
