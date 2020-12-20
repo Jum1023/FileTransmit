@@ -7,10 +7,9 @@ EQ            = =
 CC            = gcc
 CXX           = g++
 DEFINES       = -Dlinux
-CFLAGS        = -pipe -g -Wall -W -D_REENTRANT -fPIC $(DEFINES)
+CFLAGS        = -pipe -std=c99 -g -Wall -W -D_REENTRANT -fPIC $(DEFINES)
 CXXFLAGS      = -pipe -std=c++11 -g -Wall -W -D_REENTRANT -fPIC $(DEFINES)
 INCPATH       = -I.
-QMAKE         = /opt/Qt5.13.0/5.13.0/gcc_64/bin/qmake
 DEL_FILE      = rm -f
 CHK_DIR_EXISTS= test -d
 MKDIR         = mkdir -p
