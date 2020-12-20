@@ -44,18 +44,18 @@ int reactor_init(Reactor *reactor)
 	reactor->epfd = epoll_create(1);
 	if (reactor->epfd < 0)
 		return -1;
-	reactor->events = (io_event *)malloc(MAX_EPOLL_EVENTS * sizeof(io_event));
+	reactor->events = (io_event *)malloc(MAX_FD_EVENTS * sizeof(io_event));
 	if (reactor->events == NULL)
 	{
 		printf("events malloc error\n");
 		close(reactor->epfd);
 		return -1;
 	}
-	memset(reactor->events, 0, MAX_EPOLL_EVENTS * sizeof(io_event));
+	memset(reactor->events, 0, MAX_FD_EVENTS * sizeof(io_event));
 	return 0;
 }
 
-int reactor_destroy(Reactor *reactor)
+int reactor_delete(Reactor *reactor)
 {
 	if (reactor == NULL)
 		return -1;

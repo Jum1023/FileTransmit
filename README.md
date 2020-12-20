@@ -11,7 +11,7 @@
 * linux查看socket连接
 
 ```shell
-netstat -atp
+netstat -antp
 ```
 
 * mac查看socket连接
@@ -190,4 +190,10 @@ sysctl -p #生效
 7. 多进程异步 nginx
 8. 每请求每进程(线程) Apache/CGI
 9. 微进程架构 erlang/go/lua
-10. 协程架构 libco/ntyco
+10. 协程架构 libco
+
+### opensource network framework
+
+> boost.asio
+> libevent
+> https://github.com/Tencent/mars

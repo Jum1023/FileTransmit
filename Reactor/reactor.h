@@ -5,7 +5,7 @@
 
 #define BUFFER_SIZE 1024
 #define EPOLL_SIZE 1024
-#define MAX_EPOLL_EVENTS 65536
+#define MAX_FD_EVENTS (1 << 20) //1024 * 1024 = 1048576
 
 typedef int io_events_callback(int, int, void *);
 
@@ -25,7 +25,8 @@ typedef struct io_event
 typedef struct Reactor
 {
 	int epfd;
-	int stop; //is running
+	int stop;	 //is running
+	int setsize; //max number of file descriptors tracked
 	io_event *events;
 } Reactor;
 
@@ -40,7 +41,7 @@ extern int io_event_set(io_event *ev, int fd, io_events_callback callback, void 
 
 //reactor
 extern int reactor_init(Reactor *reactor);
-extern int reactor_destroy(Reactor *reactor);
+extern int reactor_delete(Reactor *reactor);
 extern void reactor_run(Reactor *reactor);
 
 #endif

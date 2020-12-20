@@ -4,8 +4,8 @@
 #include "reactor.h"
 
 #define EPOLL_SIZE 1024
-#define SERVER_IP "127.0.0.1"
-#define SERVER_PORT 8000
+#define SERVER_IP "81.69.226.177"
+#define SERVER_PORT 16384
 #define BUFFER_SIZE 1024
 
 void reactor_addlistener(Reactor *reactor, int sockfd, io_events_callback acceptor)
@@ -28,7 +28,7 @@ int main()
 	reactor_run(&reactor);
 
 	// finished
-	reactor_destroy(&reactor);
+	reactor_delete(&reactor);
 	close(server_fd);
 	return 0;
 }
