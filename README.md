@@ -22,11 +22,11 @@ lsof -p PID | grep TCP
 
 2. UDP
 
-Linux UDP server and client demo
+	Linux UDP server and client demo
 
 3. HTTP
 
-HTTP client and server demo
+	HTTP client and server demo
 
 ### TCP State
 
@@ -95,9 +95,9 @@ CLOSED			|					|
 
 1. TIME-WAIT
 
-当最后一个ack丢失时，remote端启动定时重传fin,如果没有TIME-WAIT,会一直发出无效包
+	当最后一个ack丢失时，remote端启动定时重传fin,如果没有TIME-WAIT,会一直发出无效包
 
-默认值120s，在linux下设置方式
+	默认值120s，在linux下设置方式
 ```shell
 /etc/sysctl.conf
 # 表示开启SYN Cookies。当出现SYN等待队列溢出时，启用Cookie来处理，可防范少量的SYN攻击。该参数默认为0，表示关闭
@@ -118,8 +118,8 @@ sysctl -p /etc/sysctl.conf
 
 2. FIN-WAIT-1
 
-client先异常断开没有发送FIN,server主动关闭进入FIN-WAIT-1 \
-无法收到FIN,会一直处于该状态,该状态系统有time_out,尚未查证具体时间
+	client先异常断开没有发送FIN,server主动关闭进入FIN-WAIT-1 \
+	无法收到FIN,会一直处于该状态,该状态系统有time_out,尚未查证具体时间
 ```shell
 # record what tcp_max_orphans's current value
 original_value=$(cat /proc/sys/net/ipv4/tcp_max_orphans)
@@ -138,12 +138,12 @@ echo $original_value > /proc/sys/net/ipv4/tcp_max_orphans
 #### 常见名词
 * 慢启动
 
-门限值以下是慢启动，以上是拥塞控制
+	门限值以下是慢启动，以上是拥塞控制
 
 * 拥塞控制
 
-rtt(round trip time) rtt = 0.9*pre_rtt + cur_rtt
-rtt增大window减小，rtt减小window增大
+	rtt(round trip time) rtt = 0.9*pre_rtt + cur_rtt
+	rtt增大window减小，rtt减小window增大
 
 * 滑动窗口 [ack,ack+window]
 * 超时重传
@@ -162,7 +162,7 @@ rtt增大window减小，rtt减小window增大
 
 ### reactor & proactor
 
-两种高效的IO事件处理模型
+	两种高效的IO事件处理模型
 
 ### 单台服务器百万并发
 
@@ -189,7 +189,7 @@ sysctl -p #生效
 ```
 2. 单个客户端最多连接数限制
 
-server端开发不用关注，单台客户端机器测试用
+	server端开发不用关注，单台客户端机器测试用
 ```shell
 # 修改文件
 /etc/sysctl.conf
